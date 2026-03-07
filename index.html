@@ -9,17 +9,17 @@
   <style>
     /* ─── Variables ─────────────────────────────────────────── */
     :root {
-      --bg:        #0a0c10;
-      --surface:   #111418;
-      --border:    #1e2530;
-      --accent:    #00e5ff;
-      --accent2:   #7b61ff;
-      --danger:    #ff4d6d;
-      --success:   #00c896;
-      --text:      #e8edf5;
-      --muted:     #5a6478;
-      --radius:    16px;
-      --glow:      0 0 40px rgba(0,229,255,.15);
+      --bg:         #0a0c10;
+      --surface:    #111418;
+      --border:     #1e2530;
+      --accent:     #00e5ff;
+      --accent2:    #7b61ff;
+      --danger:     #ff4d6d;
+      --success:    #00c896;
+      --text:       #e8edf5;
+      --muted:      #5a6478;
+      --radius:     16px;
+      --glow:       0 0 40px rgba(0,229,255,.15);
     }
 
     /* ─── Reset ─────────────────────────────────────────────── */
@@ -257,12 +257,21 @@
       text-align: center;
     }
     #loading-section.show { display: block; }
+    
+    /* عند الفشل نخفي اللودر ونظهر رسالة */
+    #loading-section.failed .loader-wrap,
+    #loading-section.failed .progress-steps {
+        opacity: 0.1;
+        filter: grayscale(100%);
+        pointer-events: none;
+    }
 
     .loader-wrap {
       position: relative;
       width: 100px;
       height: 100px;
       margin: 0 auto 1.5rem;
+      transition: all 0.3s;
     }
     .loader-ring {
       position: absolute; inset: 0;
@@ -422,10 +431,28 @@
       border: 1px solid rgba(255,77,109,.3);
       border-radius: 10px;
       color: var(--danger);
-      font-size: .85rem;
+      font-size: .95rem; /* كبرنا الخط قليلاً للتحذير */
       line-height: 1.5;
+      font-weight: 600;
     }
     .error-box.show { display: block; }
+
+    /* زر إعادة التحميل يظهر فقط عند الخطأ القاتل */
+    .reload-page-btn {
+        display: none;
+        margin-top: 1rem;
+        width: 100%;
+        padding: .8rem;
+        background: var(--surface);
+        border: 1px solid var(--danger);
+        color: var(--danger);
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 600;
+    }
+    .reload-page-btn.show { display: block; }
+    .reload-page-btn:hover { background: rgba(255,77,109,.1); }
 
     /* ─── Footer ─────────────────────────────────────────────── */
     .footer {
@@ -434,12 +461,6 @@
       color: var(--muted);
       font-family: 'Space Mono', monospace;
     }
-    /* ─── Pause Animations Class ─── */
-.paused * {
-  animation-play-state: paused !important;
-  opacity: 0.7;
-  filter: grayscale(100%);
-}
 
     /* ─── Animations ─────────────────────────────────────────── */
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
@@ -459,28 +480,24 @@
 
 <main class="page">
 
-  <!-- ── Header ── -->
   <header class="header">
     <div class="badge"><span></span> n8n Automation</div>
     <h1>دمج الصوت<br>مع <em>الفيديو</em></h1>
     <p>ارفع ملف الصوت وسنتولى الباقي تلقائياً</p>
   </header>
 
-  <!-- ── Upload Card ── -->
   <div class="card" id="upload-section">
 
-    <!-- N8N Webhook URL Config -->
     <div class="config-row" style = "display:none">
       <label>WEBHOOK</label>
       <input
         type="url"
         id="webhook-url"
-        placeholder=""
+        placeholder="https://tasneemahmed-n8n.hf.space/webhook/03650388-1e05-48b5-89f9-8cdfffa78ce4"
         autocomplete="off"
       />
     </div>
 
-    <!-- Drop Zone -->
     <div class="drop-zone" id="drop-zone">
       <input
         type="file"
@@ -492,7 +509,6 @@
       <div class="sublabel">أو انقر للاختيار — جميع صيغ الصوت مدعومة</div>
     </div>
 
-    <!-- File Info -->
     <div class="file-info" id="file-info">
       <div class="file-icon">🎵</div>
       <div>
@@ -502,17 +518,18 @@
       <button class="remove-btn" id="remove-btn" title="إزالة">✕</button>
     </div>
 
-    <!-- Error Box -->
     <div class="error-box" id="error-box"></div>
 
-    <!-- Submit -->
+    <button class="reload-page-btn" id="reload-page-btn" onclick="location.reload()">
+        🔄 إعادة تحميل الصفحة والبدء من جديد
+    </button>
+
     <button class="submit-btn" id="submit-btn" disabled>
       <span>🚀</span>
       <span>ابدأ المعالجة</span>
     </button>
   </div>
 
-  <!-- ── Loading Card ── -->
   <div class="card" id="loading-section">
     <div class="loader-wrap">
       <div class="loader-ring"></div>
@@ -530,7 +547,6 @@
     </div>
   </div>
 
-  <!-- ── Result Card ── -->
   <div class="card" id="result-section">
     <div class="result-header">
       <div class="result-badge">اكتملت المعالجة</div>
@@ -569,12 +585,14 @@
   const loadingSec     = document.getElementById('loading-section');
   const resultSec      = document.getElementById('result-section');
   const errorBox       = document.getElementById('error-box');
+  const reloadPageBtn  = document.getElementById('reload-page-btn');
   const resultVideo    = document.getElementById('result-video');
   const downloadBtn    = document.getElementById('download-btn');
   const againBtn       = document.getElementById('again-btn');
   const webhookInput   = document.getElementById('webhook-url');
 
-  // ─── Wake Lock Var ───────────────────────────────────────────
+  // ─── Controller for Aborting Requests ────────────────────────
+  let abortController = null;
   let wakeLock = null;
 
   // ─── Persist webhook URL ─────────────────────────────────────
@@ -633,27 +651,33 @@
   });
 
   // ─── Error helpers ───────────────────────────────────────────
-  function showError(msg, isPermanent = false) {
+  function showError(msg) {
     errorBox.textContent = msg;
     errorBox.classList.add('show');
-    if(isPermanent) {
-        errorBox.style.borderColor = 'rgba(255,77,109,.3)';
-        errorBox.style.color = 'var(--danger)';
-    } else {
-        errorBox.style.borderColor = '#ffd700';
-        errorBox.style.color = '#ffd700';
-    }
+  }
+
+  function showFatalError(msg) {
+      // 1. إظهار رسالة الخطأ
+      showError(msg);
+      // 2. إخفاء اللودر
+      loadingSec.classList.add('failed');
+      // 3. إظهار زر إعادة التحميل
+      reloadPageBtn.classList.add('show');
+      // 4. إخفاء زر الإرسال العادي لأنه أصبح بلا فائدة
+      submitBtn.style.display = 'none';
+      // 5. العودة لشاشة الرفع (لكنها الآن في وضع الفشل)
+      showSection('upload');
   }
 
   function hideError() {
     errorBox.classList.remove('show');
     errorBox.textContent = '';
-    errorBox.style.borderColor = '';
-    errorBox.style.color = '';
+    reloadPageBtn.classList.remove('show');
+    submitBtn.style.display = 'flex';
+    loadingSec.classList.remove('failed');
   }
 
   // ─── Steps animation ─────────────────────────────────────────
-  // ملاحظة: جعلت الخطوات متباعدة أكثر لتعطي وقتاً للمعالجة
   const STEP_DELAYS = [0, 8000, 20000, 45000];
   let stepTimers = [];
 
@@ -671,7 +695,7 @@
   }
 
   function clearStepTimers() {
-    stepTimers.forEach(clearTimeout); // قتل جميع المؤقتات فوراً
+    stepTimers.forEach(clearTimeout);
     stepTimers = [];
   }
 
@@ -686,99 +710,86 @@
     resultSec .style.display  = name === 'result'  ? '' : 'none';
   }
 
-  // ─── Wake Lock Logic ─────────────────────────────────────────
+  // ─── Wake Lock ───────────────────────────────────────────────
   async function requestWakeLock() {
     try {
       if ('wakeLock' in navigator) {
         wakeLock = await navigator.wakeLock.request('screen');
-        console.log('✅ Screen Wake Lock active');
       }
-    } catch (err) {
-      console.warn('⚠️ Wake Lock Error:', err.message);
-    }
+    } catch (err) {}
   }
-
   async function releaseWakeLock() {
     if (wakeLock !== null) {
-      try {
-        await wakeLock.release();
-        wakeLock = null;
-      } catch (e) {}
+      try { await wakeLock.release(); wakeLock = null; } catch (e) {}
     }
-  }
-
-  // ─── Network Status Handlers (تجميد فوري) ────────────────────
-  function handleOffline() {
-      // 1. إيقاف المؤقتات فوراً لمنع التقدم الوهمي
-      clearStepTimers(); 
-      
-      // 2. تجميد الرسوم المتحركة
-      loadingSec.classList.add('paused'); 
-
-      // 3. إظهار رسالة التحذير
-      showError('⚠️ انقطع الاتصال! توقفت العملية مؤقتاً.', false);
-  }
-
-  function handleOnline() {
-      // 1. إعادة تشغيل الرسوم المتحركة
-      loadingSec.classList.remove('paused');
-      
-      // 2. إخفاء الخطأ
-      hideError();
-      
-      // ملاحظة: لا نعيد تشغيل المؤقتات الوهمية لأننا لا نعرف أين وصلنا بالضبط
-      // سنترك المستخدم ينتظر النتيجة النهائية (التي ستظهر بمجرد نجاح الطلب)
   }
 
   // ─── Exit Protection ─────────────────────────────────────────
   function enableExitProtection() {
-    window.onbeforeunload = function (e) {
+    window.onbeforeunload = (e) => {
       e = e || window.event;
       return 'جاري المعالجة... هل أنت متأكد من الخروج؟';
     };
   }
-
   function disableExitProtection() {
     window.onbeforeunload = null;
+  }
+
+  // ─── Network Handler (FATAL ERROR) ───────────────────────────
+  function handleOffline() {
+      // هذه الدالة تقتل العملية تماماً
+      console.log('⛔ Offline detected. Aborting everything.');
+
+      // 1. إلغاء الطلب الفعلي (يوقف المتصفح فوراً)
+      if (abortController) {
+          abortController.abort();
+      }
+
+      // 2. إيقاف العدادات الوهمية
+      clearStepTimers();
+
+      // 3. عرض شاشة الموت (Fatal Error)
+      showFatalError('❌ انقطع الاتصال بالإنترنت! لقد فشلت العملية. يرجى إعادة تحميل الصفحة والمحاولة من جديد.');
   }
 
   // ─── Submit ──────────────────────────────────────────────────
   submitBtn.addEventListener('click', async () => {
     hideError();
-    
+
     if (!navigator.onLine) {
-        showError('❌ لا يوجد اتصال بالإنترنت.', true);
+        showFatalError('❌ لا يوجد اتصال بالإنترنت.');
         return;
     }
 
     const webhookUrl = webhookInput.value;
-    if (!webhookUrl) return showError('⚠️ تأكد من رابط Webhook', true);
-    if (!selectedFile) return showError('⚠️ اختر ملفاً أولاً', true);
+    if (!webhookUrl) return showError('⚠️ تأكد من رابط Webhook');
+    if (!selectedFile) return showError('⚠️ اختر ملفاً أولاً');
 
+    // إعدادات البداية
+    abortController = new AbortController(); // مفتاح الإلغاء
     await requestWakeLock();
     enableExitProtection();
-    window.addEventListener('offline', handleOffline);
-    window.addEventListener('online', handleOnline);
-    
+    window.addEventListener('offline', handleOffline); // تفعيل مراقبة الموت
+
     showSection('loading');
-    // إزالة كلاس التوقف في حالة كان موجوداً من قبل
-    loadingSec.classList.remove('paused');
     activateSteps();
 
     const formData = new FormData();
     formData.append('audio_file', selectedFile, selectedFile.name);
 
     try {
+      // نمرر signal للـ fetch عشان نقدر نقتله
       const response = await fetch(webhookUrl, {
         method: 'POST',
         body: formData,
+        signal: abortController.signal 
       });
 
-      clearStepTimers(); // تنظيف أي مؤقتات متبقية
+      clearStepTimers();
 
       if (!response.ok) {
         const errText = await response.text();
-        throw new Error(`Error ${response.status}: ${errText.slice(0, 100)}`);
+        throw new Error(`خطأ (${response.status}): ${errText.slice(0, 100)}`);
       }
 
       const contentType = response.headers.get('Content-Type') || '';
@@ -788,7 +799,6 @@
         videoBlob = await response.blob();
       } else if (contentType.includes('application/json')) {
         const data = await response.json();
-        // ... (معالجة JSON كما في الكود السابق)
         if (data.url || data.download_url) {
            const link = document.createElement('a');
            link.href = data.url || data.download_url;
@@ -798,15 +808,10 @@
            resultVideo.src  = link.href;
            
            // Cleanup manual redirect
-           disableExitProtection();
-           await releaseWakeLock();
-           window.removeEventListener('offline', handleOffline);
-           window.removeEventListener('online', handleOnline);
-           
+           cleanup();
            showSection('result');
            return;
         }
-        // Fallback for b64...
          const b64 = data.video_base64 || data.data || data.output_video;
          if(b64) {
              const byteChars = atob(b64);
@@ -817,7 +822,6 @@
         videoBlob = await response.blob();
       }
 
-      // عند النجاح: نعلم كل الخطوات كمنتهية
       document.querySelectorAll('.step').forEach(s => {
         s.classList.remove('active');
         s.classList.add('done');
@@ -832,23 +836,28 @@
 
     } catch (err) {
       clearStepTimers();
-      showSection('upload');
       
-      if (!navigator.onLine) {
-         showError('❌ فشلت العملية لانقطاع الإنترنت.', true);
-      } else {
-         showError('❌ ' + (err.message || 'خطأ غير متوقع'), true);
+      // إذا كان الخطأ بسبب انقطاع النت (AbortError) لا نفعل شيئاً لأن handleOffline تكفلت بالأمر
+      if (err.name === 'AbortError') {
+          return;
       }
+      
+      showFatalError('❌ ' + (err.message || 'فشلت العملية لسبب غير متوقع'));
       console.error(err);
 
     } finally {
-      disableExitProtection();
-      await releaseWakeLock();
-      window.removeEventListener('offline', handleOffline);
-      window.removeEventListener('online', handleOnline);
-      loadingSec.classList.remove('paused');
+       // تنظيف في كل الحالات (نجاح أو فشل غير الشبكة)
+       if (!abortController.signal.aborted) {
+           cleanup();
+       }
     }
   });
+
+  function cleanup() {
+      disableExitProtection();
+      releaseWakeLock();
+      window.removeEventListener('offline', handleOffline);
+  }
 
   againBtn.addEventListener('click', () => {
     if (resultVideo.src) URL.revokeObjectURL(resultVideo.src);
