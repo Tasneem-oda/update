@@ -736,8 +736,10 @@
     etaDisp.textContent = 'الوقت المتوقع: ~2 دقيقة';
     startTips();
 
-    // ── المرحلة 1: رفع الملف والحصول على job_id ─────────────────
-    let jobId;
+    // ── المرحلة 1: رفع الملف ─────────────────────────────────────
+    // يعمل مع workflow القديم (يُعيد فيديو مباشرة)
+    // ويعمل مع workflow الجديد (يُعيد job_id للـ polling)
+    let jobId = null;
     try {
       const formData = new FormData();
       formData.append('audio_file', selectedFile, selectedFile.name);
@@ -752,14 +754,50 @@
         throw new Error(`فشل الرفع (${response.status}): ${errText.slice(0, 120)}`);
       }
 
-      const data = await response.json();
-      jobId = data.job_id;
+      // ── قراءة الاستجابة كـ ArrayBuffer وكشف نوعها ───────────
+      const buffer      = await response.arrayBuffer();
+      const bytes       = new Uint8Array(buffer);
+      const contentType = response.headers.get('Content-Type') || '';
 
-      if (!jobId) throw new Error('لم يتم استلام job_id من الخادم. تأكد من تحديث الـ workflow.');
+      // كشف MP4 بالـ magic bytes (offset 4 = "ftyp")
+      const isMp4 = bytes.length > 8
+        && bytes[4] === 0x66 && bytes[5] === 0x74
+        && bytes[6] === 0x79 && bytes[7] === 0x70;
 
-      console.log(`✅ Job submitted: ${jobId}`);
+      console.log(`Submit response: CT="${contentType}" isMp4=${isMp4} size=${bytes.length}`);
+
+      // ── CASE A: الـ workflow القديم أعاد الفيديو مباشرةً ───────
+      if (isMp4 || contentType.includes('video') || contentType.includes('octet-stream')) {
+        console.log('⚡ Old workflow detected — video returned directly, skipping polling');
+
+        const videoBlob = new Blob([buffer], { type: 'video/mp4' });
+        const videoUrl  = URL.createObjectURL(videoBlob);
+
+        progressFill.style.transition = 'width .6s ease';
+        progressFill.style.width = '100%';
+        setAllStepsDone();
+
+        resultVideo.src  = videoUrl;
+        downloadBtn.href = videoUrl;
+
+        cleanup();
+        setTimeout(() => showSection('result'), 400);
+        return; // ← انتهى، لا نحتاج polling
+      }
+
+      // ── CASE B: الـ workflow الجديد أعاد job_id (JSON) ─────────
+      try {
+        const text = new TextDecoder().decode(buffer);
+        const data = JSON.parse(text);
+        jobId = data.job_id;
+      } catch {
+        throw new Error('استجابة الخادم غير مفهومة — تأكد من تفعيل الـ workflow الجديد.');
+      }
+
+      if (!jobId) throw new Error('لم يتم استلام job_id — تأكد من تفعيل workflow_submit.json الجديد.');
+
+      console.log(`✅ Job submitted (polling mode): ${jobId}`);
       setStepDone(1);
-      // ← نبدأ العداد الحقيقي بعد استلام job_id
       startTime = Date.now();
       startElapsedTimer();
 
@@ -774,7 +812,7 @@
       return;
     }
 
-    // ── المرحلة 2: Polling حتى اكتمال المعالجة ──────────────────
+    // ── إذا وصلنا هنا = workflow جديد = نبدأ الـ polling ─────────
     const pollUrl = getPollUrl();
     let attempts  = 0;
 
