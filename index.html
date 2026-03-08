@@ -66,9 +66,7 @@
     }
 
     /* ─── Header ─────────────────────────────────────────────── */
-    .header {
-      text-align: center;
-    }
+    .header { text-align: center; }
     .header .badge {
       display: inline-flex;
       align-items: center;
@@ -96,12 +94,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .header p {
-      margin-top: .75rem;
-      color: var(--muted);
-      font-size: .95rem;
-      font-weight: 300;
-    }
+    .header p { margin-top: .75rem; color: var(--muted); font-size: .95rem; font-weight: 300; }
 
     /* ─── Card ───────────────────────────────────────────────── */
     .card {
@@ -134,23 +127,11 @@
       position: absolute; inset: 0;
       opacity: 0; cursor: pointer; width: 100%; height: 100%;
     }
-    .drop-zone .icon {
-      font-size: 2.5rem;
-      margin-bottom: .8rem;
-      display: block;
-    }
-    .drop-zone .label {
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: .4rem;
-    }
-    .drop-zone .sublabel {
-      font-size: .8rem;
-      color: var(--muted);
-    }
+    .drop-zone .icon { font-size: 2.5rem; margin-bottom: .8rem; display: block; }
+    .drop-zone .label { font-size: 1rem; font-weight: 500; color: var(--text); margin-bottom: .4rem; }
+    .drop-zone .sublabel { font-size: .8rem; color: var(--muted); }
 
-    /* ─── File Selected State ────────────────────────────────── */
+    /* ─── File Info ──────────────────────────────────────────── */
     .file-info {
       display: none;
       align-items: center;
@@ -162,35 +143,10 @@
       margin-top: 1rem;
     }
     .file-info.show { display: flex; }
-    .file-info .file-icon {
-      width: 40px; height: 40px;
-      background: rgba(0,229,255,.15);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; flex-shrink: 0;
-    }
-    .file-info .file-name {
-      font-size: .88rem;
-      font-weight: 500;
-      color: var(--accent);
-      word-break: break-all;
-    }
-    .file-info .file-size {
-      font-size: .75rem;
-      color: var(--muted);
-      margin-top: .15rem;
-    }
-    .file-info .remove-btn {
-      margin-right: auto;
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 1.1rem;
-      padding: .25rem;
-      transition: color .2s;
-      flex-shrink: 0;
-    }
+    .file-info .file-icon { width: 40px; height: 40px; background: rgba(0,229,255,.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .file-info .file-name { font-size: .88rem; font-weight: 500; color: var(--accent); word-break: break-all; }
+    .file-info .file-size { font-size: .75rem; color: var(--muted); margin-top: .15rem; }
+    .file-info .remove-btn { margin-right: auto; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; padding: .25rem; transition: color .2s; flex-shrink: 0; }
     .file-info .remove-btn:hover { color: var(--danger); }
 
     /* ─── Submit Button ──────────────────────────────────────── */
@@ -212,17 +168,10 @@
       justify-content: center;
       gap: .6rem;
     }
-    .submit-btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0,229,255,.3);
-    }
-    .submit-btn:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,255,.3); }
+    .submit-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
-    /* ─── N8N URL Config ─────────────────────────────────────── */
+    /* ─── Webhook Config ─────────────────────────────────────── */
     .config-row {
       display: none;
       align-items: center;
@@ -233,245 +182,86 @@
       border-radius: 10px;
       padding: .6rem .9rem;
     }
-    .config-row label {
-      font-size: .75rem;
-      color: var(--muted);
-      white-space: nowrap;
-      font-family: 'Space Mono', monospace;
-    }
-    .config-row input {
-      flex: 1;
-      background: none;
-      border: none;
-      outline: none;
-      color: var(--text);
-      font-size: .8rem;
-      font-family: 'Space Mono', monospace;
-      min-width: 0;
-    }
+    .config-row label { font-size: .75rem; color: var(--muted); white-space: nowrap; font-family: 'Space Mono', monospace; }
+    .config-row input { flex: 1; background: none; border: none; outline: none; color: var(--text); font-size: .8rem; font-family: 'Space Mono', monospace; min-width: 0; }
     .config-row input::placeholder { color: var(--muted); }
 
     /* ─── Loading State ──────────────────────────────────────── */
-    #loading-section {
-      display: none;
-      text-align: center;
-    }
+    #loading-section { display: none; text-align: center; }
     #loading-section.show { display: block; }
-    
-    /* عند الفشل نخفي اللودر ونظهر رسالة */
     #loading-section.failed .loader-wrap,
-    #loading-section.failed .progress-steps {
-        opacity: 0.1;
-        filter: grayscale(100%);
-        pointer-events: none;
-    }
+    #loading-section.failed .progress-steps { opacity: 0.1; filter: grayscale(100%); pointer-events: none; }
 
-    .loader-wrap {
-      position: relative;
-      width: 100px;
-      height: 100px;
-      margin: 0 auto 1.5rem;
-      transition: all 0.3s;
-    }
-    .loader-ring {
-      position: absolute; inset: 0;
-      border-radius: 50%;
-      border: 3px solid transparent;
-      animation: spin 1.2s linear infinite;
-    }
+    .loader-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto 1.5rem; transition: all 0.3s; }
+    .loader-ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid transparent; animation: spin 1.2s linear infinite; }
     .loader-ring:nth-child(1) { border-top-color: var(--accent); animation-duration: 1.2s; }
     .loader-ring:nth-child(2) { border-right-color: var(--accent2); inset: 8px; animation-duration: 1.8s; animation-direction: reverse; }
     .loader-ring:nth-child(3) { border-bottom-color: var(--success); inset: 16px; animation-duration: 2.4s; }
-    .loader-core {
-      position: absolute;
-      inset: 28px;
-      background: radial-gradient(circle, rgba(0,229,255,.2), transparent);
-      border-radius: 50%;
-      animation: breathe 2s ease-in-out infinite;
+    .loader-core { position: absolute; inset: 28px; background: radial-gradient(circle, rgba(0,229,255,.2), transparent); border-radius: 50%; animation: breathe 2s ease-in-out infinite; }
+
+    /* ─── Poll Counter ───────────────────────────────────────── */
+    .poll-counter {
+      display: inline-block;
+      margin-top: .5rem;
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: .25rem .8rem;
+      letter-spacing: .05em;
     }
 
-    .loading-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: .5rem;
-    }
-    .loading-sub {
-      color: var(--muted);
-      font-size: .85rem;
-    }
-    .progress-steps {
-      margin-top: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: .6rem;
-      text-align: right;
-    }
-    .step {
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-      padding: .6rem .9rem;
-      border-radius: 8px;
-      background: rgba(255,255,255,.02);
-      border: 1px solid transparent;
-      font-size: .82rem;
-      color: var(--muted);
-      transition: all .4s;
-    }
-    .step.active {
-      color: var(--text);
-      border-color: var(--accent);
-      background: rgba(0,229,255,.05);
-    }
+    .loading-title { font-size: 1.1rem; font-weight: 600; margin-bottom: .5rem; }
+    .loading-sub { color: var(--muted); font-size: .85rem; }
+
+    .progress-steps { margin-top: 1.5rem; display: flex; flex-direction: column; gap: .6rem; text-align: right; }
+    .step { display: flex; align-items: center; gap: .75rem; padding: .6rem .9rem; border-radius: 8px; background: rgba(255,255,255,.02); border: 1px solid transparent; font-size: .82rem; color: var(--muted); transition: all .4s; }
+    .step.active { color: var(--text); border-color: var(--accent); background: rgba(0,229,255,.05); }
     .step.done { color: var(--success); border-color: rgba(0,200,150,.3); background: rgba(0,200,150,.05); }
-    .step .step-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--muted);
-      flex-shrink: 0;
-      transition: background .4s;
-    }
+    .step .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; transition: background .4s; }
     .step.active .step-dot { background: var(--accent); animation: pulse 1s infinite; }
     .step.done .step-dot { background: var(--success); }
 
-    /* ─── Result State ───────────────────────────────────────── */
+    /* ─── Result ─────────────────────────────────────────────── */
     #result-section { display: none; }
     #result-section.show { display: block; }
 
-    .result-header {
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-      margin-bottom: 1.25rem;
-    }
-    .result-badge {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .4rem .9rem;
-      background: rgba(0,200,150,.1);
-      border: 1px solid rgba(0,200,150,.3);
-      border-radius: 999px;
-      color: var(--success);
-      font-size: .8rem;
-      font-weight: 500;
-    }
-    .result-badge::before {
-      content: '✓';
-      font-weight: 700;
-    }
+    .result-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
+    .result-badge { display: flex; align-items: center; gap: .5rem; padding: .4rem .9rem; background: rgba(0,200,150,.1); border: 1px solid rgba(0,200,150,.3); border-radius: 999px; color: var(--success); font-size: .8rem; font-weight: 500; }
+    .result-badge::before { content: '✓'; font-weight: 700; }
 
-    .video-wrapper {
-      border-radius: 12px;
-      overflow: hidden;
-      background: #000;
-      border: 1px solid var(--border);
-      position: relative;
-      box-shadow: 0 0 40px rgba(0,0,0,.5);
-    }
-    #result-video {
-      width: 100%;
-      display: block;
-      max-height: 320px;
-      object-fit: contain;
-    }
+    .video-wrapper { border-radius: 12px; overflow: hidden; background: #000; border: 1px solid var(--border); position: relative; box-shadow: 0 0 40px rgba(0,0,0,.5); }
+    #result-video { width: 100%; display: block; max-height: 320px; object-fit: contain; }
 
-    .result-actions {
-      display: flex;
-      gap: .75rem;
-      margin-top: 1rem;
-    }
-    .action-btn {
-      flex: 1;
-      padding: .75rem;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      font-family: 'IBM Plex Sans Arabic', sans-serif;
-      font-size: .9rem;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: .5rem;
-      transition: all .2s;
-      text-decoration: none;
-    }
-    .action-btn.primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-color: transparent;
-      color: #000;
-    }
+    .result-actions { display: flex; gap: .75rem; margin-top: 1rem; }
+    .action-btn { flex: 1; padding: .75rem; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: .9rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: .5rem; transition: all .2s; text-decoration: none; }
+    .action-btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); border-color: transparent; color: #000; }
     .action-btn:hover { transform: translateY(-2px); }
     .action-btn.primary:hover { box-shadow: 0 6px 20px rgba(0,229,255,.3); }
 
-    .again-btn {
-      width: 100%;
-      margin-top: 1rem;
-      padding: .7rem;
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--muted);
-      font-family: 'IBM Plex Sans Arabic', sans-serif;
-      font-size: .88rem;
-      cursor: pointer;
-      transition: all .2s;
-    }
+    .again-btn { width: 100%; margin-top: 1rem; padding: .7rem; background: none; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: .88rem; cursor: pointer; transition: all .2s; }
     .again-btn:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ─── Error ──────────────────────────────────────────────── */
-    .error-box {
-      display: none;
-      margin-top: 1rem;
-      padding: .9rem 1.1rem;
-      background: rgba(255,77,109,.08);
-      border: 1px solid rgba(255,77,109,.3);
-      border-radius: 10px;
-      color: var(--danger);
-      font-size: .95rem; /* كبرنا الخط قليلاً للتحذير */
-      line-height: 1.5;
-      font-weight: 600;
-    }
+    .error-box { display: none; margin-top: 1rem; padding: .9rem 1.1rem; background: rgba(255,77,109,.08); border: 1px solid rgba(255,77,109,.3); border-radius: 10px; color: var(--danger); font-size: .95rem; line-height: 1.5; font-weight: 600; }
     .error-box.show { display: block; }
 
-    /* زر إعادة التحميل يظهر فقط عند الخطأ القاتل */
-    .reload-page-btn {
-        display: none;
-        margin-top: 1rem;
-        width: 100%;
-        padding: .8rem;
-        background: var(--surface);
-        border: 1px solid var(--danger);
-        color: var(--danger);
-        border-radius: 10px;
-        cursor: pointer;
-        font-family: inherit;
-        font-weight: 600;
-    }
+    .reload-page-btn { display: none; margin-top: 1rem; width: 100%; padding: .8rem; background: var(--surface); border: 1px solid var(--danger); color: var(--danger); border-radius: 10px; cursor: pointer; font-family: inherit; font-weight: 600; }
     .reload-page-btn.show { display: block; }
     .reload-page-btn:hover { background: rgba(255,77,109,.1); }
 
     /* ─── Footer ─────────────────────────────────────────────── */
-    .footer {
-      text-align: center;
-      font-size: .75rem;
-      color: var(--muted);
-      font-family: 'Space Mono', monospace;
-    }
+    .footer { text-align: center; font-size: .75rem; color: var(--muted); font-family: 'Space Mono', monospace; }
 
     /* ─── Animations ─────────────────────────────────────────── */
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
-    @keyframes spin  { to { transform: rotate(360deg); } }
+    @keyframes pulse   { 0%,100%{opacity:1;transform:scale(1)}  50%{opacity:.5;transform:scale(.8)} }
+    @keyframes spin    { to { transform: rotate(360deg); } }
     @keyframes breathe { 0%,100%{opacity:.4} 50%{opacity:1} }
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(20px); }
-      to   { opacity:1; transform:translateY(0);    }
-    }
-    .card { animation: fadeUp .5s ease both; }
-    .header { animation: fadeUp .5s .1s ease both; }
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .card    { animation: fadeUp .5s ease both; }
+    .header  { animation: fadeUp .5s .1s ease both; }
   </style>
 </head>
 <body>
@@ -481,14 +271,15 @@
 <main class="page">
 
   <header class="header">
-    <div class="badge"><span></span> n8n Automation</div>
+    <div class="badge"><span></span> n8n Automation — Polling Mode</div>
     <h1>دمج الصوت<br>مع <em>الفيديو</em></h1>
     <p>ارفع ملف الصوت وسنتولى الباقي تلقائياً</p>
   </header>
 
+  <!-- ─── Upload Section ────────────────────────────────────── -->
   <div class="card" id="upload-section">
 
-    <div class="config-row" style = "display:none">
+    <div class="config-row" style="display:none">
       <label>WEBHOOK</label>
       <input
         type="url"
@@ -499,11 +290,7 @@
     </div>
 
     <div class="drop-zone" id="drop-zone">
-      <input
-        type="file"
-        id="audio-file"
-        accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.wma,.opus,.mp4"
-      />
+      <input type="file" id="audio-file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.wma,.opus,.mp4" />
       <span class="icon">🎵</span>
       <div class="label">اسحب ملف الصوت هنا</div>
       <div class="sublabel">أو انقر للاختيار — جميع صيغ الصوت مدعومة</div>
@@ -521,7 +308,7 @@
     <div class="error-box" id="error-box"></div>
 
     <button class="reload-page-btn" id="reload-page-btn" onclick="location.reload()">
-        🔄 إعادة تحميل الصفحة والبدء من جديد
+      🔄 إعادة تحميل الصفحة والبدء من جديد
     </button>
 
     <button class="submit-btn" id="submit-btn" disabled>
@@ -530,6 +317,7 @@
     </button>
   </div>
 
+  <!-- ─── Loading Section ───────────────────────────────────── -->
   <div class="card" id="loading-section">
     <div class="loader-wrap">
       <div class="loader-ring"></div>
@@ -539,14 +327,19 @@
     </div>
     <div class="loading-title">جاري المعالجة…</div>
     <div class="loading-sub">لا تغلق هذه الصفحة</div>
+
+    <!-- عداد الـ polling — جديد -->
+    <div class="poll-counter" id="poll-counter">⏳ في انتظار بدء المعالجة</div>
+
     <div class="progress-steps" id="steps-container">
       <div class="step active" id="step-1"><div class="step-dot"></div> رفع ملف الصوت</div>
-      <div class="step"        id="step-2"><div class="step-dot"></div> تنزيل الفيديو  </div>
-      <div class="step"        id="step-3"><div class="step-dot"></div> دمج الصوت والفيديو  </div>
+      <div class="step"        id="step-2"><div class="step-dot"></div> تنزيل الفيديو</div>
+      <div class="step"        id="step-3"><div class="step-dot"></div> دمج الصوت والفيديو</div>
       <div class="step"        id="step-4"><div class="step-dot"></div> تجهيز الملف النهائي</div>
     </div>
   </div>
 
+  <!-- ─── Result Section ────────────────────────────────────── -->
   <div class="card" id="result-section">
     <div class="result-header">
       <div class="result-badge">اكتملت المعالجة</div>
@@ -568,52 +361,65 @@
     <button class="again-btn" id="again-btn">↺ معالجة ملف آخر</button>
   </div>
 
-  <footer class="footer">Powered by n8n + FFmpeg</footer>
+  <footer class="footer">Powered by n8n + FFmpeg · Polling Mode</footer>
 
 </main>
 
 <script>
   // ─── DOM refs ────────────────────────────────────────────────
-  const dropZone       = document.getElementById('drop-zone');
-  const fileInput      = document.getElementById('audio-file');
-  const fileInfo       = document.getElementById('file-info');
-  const fileNameTxt    = document.getElementById('file-name-text');
-  const fileSizeTxt    = document.getElementById('file-size-text');
-  const removeBtn      = document.getElementById('remove-btn');
-  const submitBtn      = document.getElementById('submit-btn');
-  const uploadSec      = document.getElementById('upload-section');
-  const loadingSec     = document.getElementById('loading-section');
-  const resultSec      = document.getElementById('result-section');
-  const errorBox       = document.getElementById('error-box');
-  const reloadPageBtn  = document.getElementById('reload-page-btn');
-  const resultVideo    = document.getElementById('result-video');
-  const downloadBtn    = document.getElementById('download-btn');
-  const againBtn       = document.getElementById('again-btn');
-  const webhookInput   = document.getElementById('webhook-url');
+  const dropZone      = document.getElementById('drop-zone');
+  const fileInput     = document.getElementById('audio-file');
+  const fileInfo      = document.getElementById('file-info');
+  const fileNameTxt   = document.getElementById('file-name-text');
+  const fileSizeTxt   = document.getElementById('file-size-text');
+  const removeBtn     = document.getElementById('remove-btn');
+  const submitBtn     = document.getElementById('submit-btn');
+  const uploadSec     = document.getElementById('upload-section');
+  const loadingSec    = document.getElementById('loading-section');
+  const resultSec     = document.getElementById('result-section');
+  const errorBox      = document.getElementById('error-box');
+  const reloadPageBtn = document.getElementById('reload-page-btn');
+  const resultVideo   = document.getElementById('result-video');
+  const downloadBtn   = document.getElementById('download-btn');
+  const againBtn      = document.getElementById('again-btn');
+  const webhookInput  = document.getElementById('webhook-url');
+  const pollCounter   = document.getElementById('poll-counter');
 
-  // ─── Controller for Aborting Requests ────────────────────────
-  let abortController = null;
-  let wakeLock = null;
+  // ─── State ──────────────────────────────────────────────────
+  let selectedFile     = null;
+  let pollingInterval  = null;    // ← الجديد: مرجع الـ interval
+  let wakeLock         = null;
+
+  // ─── Config ─────────────────────────────────────────────────
+  const SUBMIT_WEBHOOK = 'https://tasneemahmed-n8n.hf.space/webhook/03650388-1e05-48b5-89f9-8cdfffa78ce4';
+  const POLL_INTERVAL_MS  = 5000;    // فحص كل 5 ثوانٍ
+  const POLL_TIMEOUT_MS   = 12 * 60 * 1000;  // حد أقصى 12 دقيقة
+  const UPLOAD_TIMEOUT_MS = 90 * 1000;        // 90 ثانية للرفع
 
   // ─── Persist webhook URL ─────────────────────────────────────
   const STORAGE_KEY = 'n8n_webhook_url';
   const savedUrl = localStorage.getItem(STORAGE_KEY);
   if (savedUrl) webhookInput.value = savedUrl;
-  
-  if (!webhookInput.value) {
-      webhookInput.value = "https://tasneemahmed-n8n.hf.space/webhook/03650388-1e05-48b5-89f9-8cdfffa78ce4";
+  if (!webhookInput.value) webhookInput.value = SUBMIT_WEBHOOK;
+  webhookInput.addEventListener('change', () =>
+    localStorage.setItem(STORAGE_KEY, webhookInput.value.trim())
+  );
+
+  // ─── Derive poll URL from submit URL ─────────────────────────
+  function getPollUrl() {
+    try {
+      const submitUrl = webhookInput.value.trim();
+      const u = new URL(submitUrl);
+      return `${u.protocol}//${u.host}/webhook/poll-video`;
+    } catch {
+      return 'https://tasneemahmed-n8n.hf.space/webhook/poll-video';
+    }
   }
 
-  webhookInput.addEventListener('change', () => {
-    localStorage.setItem(STORAGE_KEY, webhookInput.value.trim());
-  });
-
   // ─── File handling ───────────────────────────────────────────
-  let selectedFile = null;
-
   function formatBytes(bytes) {
-    if (bytes < 1024)       return bytes + ' B';
-    if (bytes < 1048576)    return (bytes/1024).toFixed(1) + ' KB';
+    if (bytes < 1024)    return bytes + ' B';
+    if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
     return (bytes/1048576).toFixed(2) + ' MB';
   }
 
@@ -634,13 +440,9 @@
     submitBtn.disabled = true;
   }
 
-  fileInput.addEventListener('change', () => {
-    if (fileInput.files[0]) setFile(fileInput.files[0]);
-  });
-
+  fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
   removeBtn.addEventListener('click', (e) => { e.preventDefault(); clearFile(); });
 
-  // Drag & Drop
   dropZone.addEventListener('dragover',  (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
   dropZone.addEventListener('dragleave', ()  => dropZone.classList.remove('dragover'));
   dropZone.addEventListener('drop', (e) => {
@@ -657,16 +459,10 @@
   }
 
   function showFatalError(msg) {
-      // 1. إظهار رسالة الخطأ
-      showError(msg);
-      // 2. إخفاء اللودر
-      loadingSec.classList.add('failed');
-      // 3. إظهار زر إعادة التحميل
-      reloadPageBtn.classList.add('show');
-      // 4. إخفاء زر الإرسال العادي لأنه أصبح بلا فائدة
-      submitBtn.style.display = 'none';
-      // 5. العودة لشاشة الرفع (لكنها الآن في وضع الفشل)
-      showSection('upload');
+    showError(msg);
+    loadingSec.classList.add('failed');
+    reloadPageBtn.classList.add('show');
+    submitBtn.style.display = 'none';
   }
 
   function hideError() {
@@ -677,18 +473,38 @@
     loadingSec.classList.remove('failed');
   }
 
-  // ─── Steps animation ─────────────────────────────────────────
-  const STEP_DELAYS = [0, 8000, 20000, 45000];
+  // ─── Steps helpers ───────────────────────────────────────────
+  function setStepActive(n) {
+    for (let i = 1; i <= 4; i++) {
+      const s = document.getElementById(`step-${i}`);
+      if (!s) continue;
+      if      (i < n)  { s.classList.remove('active'); s.classList.add('done'); }
+      else if (i === n){ s.classList.add('active');    s.classList.remove('done'); }
+      else             { s.classList.remove('active',  'done'); }
+    }
+  }
+
+  function setStepDone(n) {
+    const s = document.getElementById(`step-${n}`);
+    if (s) { s.classList.remove('active'); s.classList.add('done'); }
+  }
+
+  function setAllStepsDone() {
+    for (let i = 1; i <= 4; i++) setStepDone(i);
+  }
+
+  // ─── Timing-based step animation (visual only, steps 2-4) ────
   let stepTimers = [];
 
-  function activateSteps() {
-    STEP_DELAYS.forEach((delay, i) => {
+  function startStepAnimation() {
+    // Step 1 is already active; animate 2, 3, 4 by elapsed time
+    const delays = [6000, 22000, 55000];
+    delays.forEach((delay, i) => {
+      const stepNum = i + 2;
       const t = setTimeout(() => {
-        const all = document.querySelectorAll('.step');
-        all.forEach((s, j) => {
-          if (j < i)  { s.classList.remove('active'); s.classList.add('done'); }
-          if (j === i){ s.classList.add('active'); s.classList.remove('done'); }
-        });
+        // لا تبدّل إذا كانت الخطوة مكتملة فعلاً
+        const s = document.getElementById(`step-${stepNum}`);
+        if (s && !s.classList.contains('done')) setStepActive(stepNum);
       }, delay);
       stepTimers.push(t);
     });
@@ -699,175 +515,211 @@
     stepTimers = [];
   }
 
-  // ─── Show / hide sections ────────────────────────────────────
-  function showSection(name) {
-    uploadSec .classList.toggle('show', name === 'upload');
-    loadingSec.classList.toggle('show', name === 'loading');
-    resultSec .classList.toggle('show', name === 'result');
+  // ─── Poll counter display ────────────────────────────────────
+  function updatePollCounter(attemptNum, elapsedMs) {
+    const elapsedSec  = Math.round(elapsedMs / 1000);
+    const mins = Math.floor(elapsedSec / 60);
+    const secs = elapsedSec % 60;
+    const timeStr = mins > 0 ? `${mins}د ${secs}ث` : `${secs}ث`;
+    pollCounter.textContent = `🔄 فحص #${attemptNum} · منذ ${timeStr}`;
+  }
 
-    uploadSec .style.display  = name === 'upload'  ? '' : 'none';
-    loadingSec.style.display  = name === 'loading' ? '' : 'none';
-    resultSec .style.display  = name === 'result'  ? '' : 'none';
+  // ─── Section visibility ──────────────────────────────────────
+  function showSection(name) {
+    uploadSec .style.display = name === 'upload'  ? '' : 'none';
+    loadingSec.style.display = name === 'loading' ? '' : 'none';
+    resultSec .style.display = name === 'result'  ? '' : 'none';
   }
 
   // ─── Wake Lock ───────────────────────────────────────────────
   async function requestWakeLock() {
-    try {
-      if ('wakeLock' in navigator) {
-        wakeLock = await navigator.wakeLock.request('screen');
-      }
-    } catch (err) {}
+    try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
   }
   async function releaseWakeLock() {
-    if (wakeLock !== null) {
-      try { await wakeLock.release(); wakeLock = null; } catch (e) {}
-    }
+    if (wakeLock) { try { await wakeLock.release(); wakeLock = null; } catch(e) {} }
   }
 
-  // ─── Exit Protection ─────────────────────────────────────────
-  function enableExitProtection() {
-    window.onbeforeunload = (e) => {
-      e = e || window.event;
-      return 'جاري المعالجة... هل أنت متأكد من الخروج؟';
-    };
-  }
-  function disableExitProtection() {
-    window.onbeforeunload = null;
+  // ─── Exit protection ─────────────────────────────────────────
+  function enableExitProtection()  { window.onbeforeunload = () => 'جاري المعالجة... هل أنت متأكد؟'; }
+  function disableExitProtection() { window.onbeforeunload = null; }
+
+  // ─── Cleanup (always call at end) ────────────────────────────
+  function cleanup() {
+    disableExitProtection();
+    releaseWakeLock();
+    clearStepTimers();
+    if (pollingInterval) { clearInterval(pollingInterval); pollingInterval = null; }
+    window.removeEventListener('offline', handleOffline);
   }
 
-  // ─── Network Handler (FATAL ERROR) ───────────────────────────
+  // ─── Offline handler ─────────────────────────────────────────
   function handleOffline() {
-      // هذه الدالة تقتل العملية تماماً
-      console.log('⛔ Offline detected. Aborting everything.');
-
-      // 1. إلغاء الطلب الفعلي (يوقف المتصفح فوراً)
-      if (abortController) {
-          abortController.abort();
-      }
-
-      // 2. إيقاف العدادات الوهمية
-      clearStepTimers();
-
-      // 3. عرض شاشة الموت (Fatal Error)
-      showFatalError('❌ انقطع الاتصال بالإنترنت! لقد فشلت العملية. يرجى إعادة تحميل الصفحة والمحاولة من جديد.');
+    console.warn('⛔ Offline detected — stopping polling');
+    cleanup();
+    showFatalError('❌ انقطع الاتصال بالإنترنت! فشلت العملية. أعد تحميل الصفحة وحاول مرة أخرى.');
+    showSection('upload');
   }
 
-  // ─── Submit ──────────────────────────────────────────────────
+  // ─── Fetch with manual timeout (compatible with all browsers) ─
+  function fetchWithTimeout(url, options, timeoutMs) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    return fetch(url, { ...options, signal: controller.signal })
+      .finally(() => clearTimeout(timer));
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  //  MAIN SUBMIT HANDLER
+  // ══════════════════════════════════════════════════════════════
   submitBtn.addEventListener('click', async () => {
     hideError();
 
-    if (!navigator.onLine) {
-        showFatalError('❌ لا يوجد اتصال بالإنترنت.');
-        return;
-    }
+    if (!navigator.onLine) { showFatalError('❌ لا يوجد اتصال بالإنترنت.'); return; }
 
-    const webhookUrl = webhookInput.value;
-    if (!webhookUrl) return showError('⚠️ تأكد من رابط Webhook');
+    const webhookUrl = webhookInput.value.trim();
+    if (!webhookUrl)  return showError('⚠️ تأكد من رابط Webhook');
     if (!selectedFile) return showError('⚠️ اختر ملفاً أولاً');
 
-    // إعدادات البداية
-    abortController = new AbortController(); // مفتاح الإلغاء
+    // ── إعدادات البداية ─────────────────────────────────────────
     await requestWakeLock();
     enableExitProtection();
-    window.addEventListener('offline', handleOffline); // تفعيل مراقبة الموت
+    window.addEventListener('offline', handleOffline);
 
     showSection('loading');
-    activateSteps();
+    setStepActive(1);
+    pollCounter.textContent = '⬆️ جاري رفع الملف…';
 
-    const formData = new FormData();
-    formData.append('audio_file', selectedFile, selectedFile.name);
-
+    // ── المرحلة 1: رفع الملف والحصول على job_id ─────────────────
+    let jobId;
     try {
-      // نمرر signal للـ fetch عشان نقدر نقتله
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        body: formData,
-        signal: abortController.signal 
-      });
+      const formData = new FormData();
+      formData.append('audio_file', selectedFile, selectedFile.name);
 
-      clearStepTimers();
+      const response = await fetchWithTimeout(webhookUrl, {
+        method: 'POST',
+        body: formData
+      }, UPLOAD_TIMEOUT_MS);
 
       if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`خطأ (${response.status}): ${errText.slice(0, 100)}`);
+        const errText = await response.text().catch(() => '');
+        throw new Error(`فشل الرفع (${response.status}): ${errText.slice(0, 120)}`);
       }
 
-      const contentType = response.headers.get('Content-Type') || '';
-      let videoBlob;
+      const data = await response.json();
+      jobId = data.job_id;
 
-      if (contentType.includes('video') || contentType.includes('octet-stream')) {
-        videoBlob = await response.blob();
-      } else if (contentType.includes('application/json')) {
-        const data = await response.json();
-        if (data.url || data.download_url) {
-           const link = document.createElement('a');
-           link.href = data.url || data.download_url;
-           link.download = 'output.mp4';
-           link.target = '_blank';
-           downloadBtn.href = link.href;
-           resultVideo.src  = link.href;
-           
-           // Cleanup manual redirect
-           cleanup();
-           showSection('result');
-           return;
-        }
-         const b64 = data.video_base64 || data.data || data.output_video;
-         if(b64) {
-             const byteChars = atob(b64);
-             const byteNums = new Uint8Array(byteChars.length);
-             videoBlob = new Blob([byteNums], {type: 'video/mp4'});
-         } else { throw new Error('No video found'); }
-      } else {
-        videoBlob = await response.blob();
-      }
+      if (!jobId) throw new Error('لم يتم استلام job_id من الخادم. تأكد من تحديث الـ workflow.');
 
-      document.querySelectorAll('.step').forEach(s => {
-        s.classList.remove('active');
-        s.classList.add('done');
-      });
-
-      const videoUrl = URL.createObjectURL(videoBlob);
-      resultVideo.src  = videoUrl;
-      downloadBtn.href = videoUrl;
-      downloadBtn.onclick = null;
-
-      showSection('result');
+      console.log(`✅ Job submitted: ${jobId}`);
+      setStepDone(1);
+      startStepAnimation(); // تبدأ الخطوات 2-4 بالتحريك التلقائي
 
     } catch (err) {
-      clearStepTimers();
-      
-      // إذا كان الخطأ بسبب انقطاع النت (AbortError) لا نفعل شيئاً لأن handleOffline تكفلت بالأمر
+      cleanup();
       if (err.name === 'AbortError') {
-          return;
+        showFatalError('❌ انتهت مهلة رفع الملف (90 ثانية). يرجى المحاولة مرة أخرى.');
+      } else {
+        showFatalError('❌ ' + (err.message || 'فشل رفع الملف لسبب غير متوقع'));
       }
-      
-      showFatalError('❌ ' + (err.message || 'فشلت العملية لسبب غير متوقع'));
-      console.error(err);
-
-    } finally {
-       // تنظيف في كل الحالات (نجاح أو فشل غير الشبكة)
-       if (!abortController.signal.aborted) {
-           cleanup();
-       }
+      showSection('upload');
+      return;
     }
-  });
 
-  function cleanup() {
-      disableExitProtection();
-      releaseWakeLock();
-      window.removeEventListener('offline', handleOffline);
-  }
+    // ── المرحلة 2: Polling حتى اكتمال المعالجة ──────────────────
+    const pollUrl   = getPollUrl();
+    const startTime = Date.now();
+    let   attempts  = 0;
 
+    console.log(`🔄 Starting polling: ${pollUrl}?job_id=${jobId}`);
+    pollCounter.textContent = `🔄 بدأ الفحص التلقائي…`;
+
+    pollingInterval = setInterval(async () => {
+      const elapsed = Date.now() - startTime;
+      attempts++;
+      updatePollCounter(attempts, elapsed);
+
+      // Timeout guard
+      if (elapsed > POLL_TIMEOUT_MS) {
+        cleanup();
+        showFatalError('❌ انتهت مهلة الانتظار (12 دقيقة). يرجى المحاولة مرة أخرى.');
+        showSection('upload');
+        return;
+      }
+
+      try {
+        const response = await fetchWithTimeout(
+          `${pollUrl}?job_id=${encodeURIComponent(jobId)}`,
+          { method: 'GET' },
+          30000 // 30 ثانية timeout لكل poll
+        );
+
+        const contentType = response.headers.get('Content-Type') || '';
+
+        // ✅ حالة النجاح: استلمنا الفيديو مباشرة
+        if (contentType.includes('video') || contentType.includes('octet-stream')) {
+          clearInterval(pollingInterval);
+          pollingInterval = null;
+          pollCounter.textContent = '✅ اكتمل التحميل!';
+
+          const videoBlob = await response.blob();
+          const videoUrl  = URL.createObjectURL(videoBlob);
+
+          setAllStepsDone();
+          resultVideo.src  = videoUrl;
+          downloadBtn.href = videoUrl;
+          downloadBtn.onclick = null;
+
+          cleanup();
+          showSection('result');
+          return;
+        }
+
+        // 🔍 حالة JSON: اقرأ الحالة
+        if (response.ok) {
+          const data = await response.json().catch(() => ({}));
+          console.log(`Poll #${attempts}: status = ${data.status}`);
+
+          if (data.status === 'error') {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+            cleanup();
+            showFatalError('❌ فشلت المعالجة على الخادم: ' + (data.message || 'خطأ غير معروف'));
+            showSection('upload');
+            return;
+          }
+          // status = 'processing' | 'not_found' → نكمل الانتظار
+        }
+
+      } catch (err) {
+        // أخطاء الشبكة المؤقتة لا تُوقف الـ polling — نعيد المحاولة
+        if (err.name !== 'AbortError') {
+          console.warn(`Poll #${attempts} error (retrying):`, err.message);
+        }
+      }
+
+    }, POLL_INTERVAL_MS);
+
+  }); // end submitBtn click
+
+  // ─── Again Button ────────────────────────────────────────────
   againBtn.addEventListener('click', () => {
     if (resultVideo.src) URL.revokeObjectURL(resultVideo.src);
     resultVideo.src  = '';
     downloadBtn.href = '#';
     clearFile();
     hideError();
+    cleanup();
     showSection('upload');
+    // إعادة تهيئة الخطوات
+    for (let i = 1; i <= 4; i++) {
+      const s = document.getElementById(`step-${i}`);
+      if (s) { s.classList.remove('active', 'done'); }
+    }
+    document.getElementById('step-1').classList.add('active');
+    pollCounter.textContent = '⏳ في انتظار بدء المعالجة';
   });
 
+  // ─── Init ────────────────────────────────────────────────────
   showSection('upload');
 </script>
 
