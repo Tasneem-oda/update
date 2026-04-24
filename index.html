@@ -18,7 +18,6 @@
     }
     body{font-family:'Cairo',sans-serif;background:var(--g50);color:var(--g800);min-height:100vh}
 
-    /* ── حالات التحميل والخطأ ── */
     .full-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;text-align:center;gap:14px}
     .full-page h2{font-size:18px;color:var(--g800)}
     .full-page p{font-size:14px;color:var(--g400)}
@@ -26,41 +25,33 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     .error-icon{font-size:48px}
 
-    /* ── الهيدر ── */
     .hdr{background:linear-gradient(135deg,var(--p) 0%,var(--pd) 100%);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(79,70,229,.35)}
     .hdr-logo{display:flex;align-items:center;gap:10px}
     .hdr-logo span{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px}
     .client-badge{background:rgba(255,255,255,.18);backdrop-filter:blur(4px);color:#fff;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.25)}
 
-    /* ── شريط تحذير الدفع ── */
     .payment-banner{background:var(--wl);border-bottom:2px solid #fbbf24;padding:10px 20px;text-align:center;font-size:13px;font-weight:700;color:#92400e;display:none;gap:8px;align-items:center;justify-content:center}
     .payment-banner.show{display:flex}
 
-    /* ── الإحصائيات ── */
     .stats{background:#fff;border-bottom:1px solid var(--g200);display:flex;overflow-x:auto}
     .stat{padding:16px 20px;text-align:center;border-left:1px solid var(--g200);flex:1;min-width:110px;transition:background .2s}
     .stat:last-child{border-left:none}
     .stat-val{font-size:24px;font-weight:800;line-height:1;margin-bottom:5px}
     .stat-lbl{font-size:11px;color:var(--g400);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 
-    /* ── التابات ── */
     .tabs{background:#fff;border-bottom:1px solid var(--g200);display:flex;padding:0 16px;gap:4px}
     .tab{padding:13px 18px;border:none;background:none;font-family:'Cairo';font-size:13px;font-weight:700;color:var(--g400);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;display:flex;align-items:center;gap:6px}
     .tab.on{color:var(--p);border-bottom-color:var(--p)}
     .tab:hover:not(.on){color:var(--g700);background:var(--g50)}
 
-    /* ── المحتوى ── */
     .content{max-width:920px;margin:0 auto;padding:20px 14px}
 
-    /* ── البطاقات ── */
     .card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
     .card-title{font-size:14px;font-weight:800;margin-bottom:16px;color:var(--g800);display:flex;align-items:center;gap:7px}
 
-    /* ── صندوق المعاينة ── */
     .preview-box{background:var(--pl);border:1.5px solid #c4b5fd;border-radius:var(--rs);padding:11px 14px;margin-top:14px;font-size:12px;color:var(--pd);line-height:1.9;display:none}
     .preview-box strong{font-weight:700}
 
-    /* ── الكاروسيل ── */
     .carousel-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;background:#fff;padding:11px 14px;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--shadow)}
     .nav-btn{background:var(--pl);color:var(--p);border:none;padding:6px 16px;border-radius:var(--rs);font-weight:700;cursor:pointer;font-family:'Cairo';font-size:13px;transition:all .2s}
     .nav-btn:hover:not(:disabled){background:var(--p);color:#fff}
@@ -68,7 +59,6 @@
     .slide-title{font-weight:800;font-size:15px;color:var(--g800);text-align:center}
     .slide-counter{font-size:11px;color:var(--g400);font-weight:600;margin-top:2px;text-align:center}
 
-    /* ── الجدول ── */
     .table-wrap{overflow-x:auto;border-radius:var(--rs)}
     table{width:100%;border-collapse:collapse;font-size:13px}
     th{text-align:right;background:var(--g100);padding:11px 14px;color:var(--g600);font-weight:700;border-bottom:2px solid var(--g200);white-space:nowrap;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
@@ -86,14 +76,12 @@
     .btn-delete{color:var(--d);background:var(--dl)}
     .btn-delete:hover:not(:disabled){background:var(--d);color:#fff}
 
-    /* ── الشارات ── */
     .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
     .b-published{background:var(--sl);color:var(--s)}
     .b-pending{background:var(--wl);color:var(--w)}
     .b-late{background:var(--dl);color:var(--d)}
     .b-failed{background:var(--dl);color:var(--d)}
 
-    /* ── الفورم ── */
     .field{margin-bottom:14px}
     label{display:block;font-size:12px;font-weight:700;color:var(--g600);margin-bottom:5px;letter-spacing:.2px}
     label .req{color:var(--d);margin-right:2px}
@@ -105,7 +93,6 @@
     .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
     .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
-    /* ── الأزرار الرئيسية ── */
     .btn{font-family:'Cairo';font-size:13px;font-weight:700;padding:11px 20px;border-radius:var(--rs);border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;letter-spacing:.2px}
     .btn-primary{background:var(--p);color:#fff;box-shadow:0 2px 8px rgba(79,70,229,.35)}
     .btn-primary:hover:not(:disabled){background:var(--pd);transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,70,229,.4)}
@@ -116,7 +103,6 @@
     .btn-danger:hover:not(:disabled){background:#b91c1c}
     .btn-danger:disabled{opacity:.6;cursor:not-allowed}
 
-    /* ── بطاقة المنشور ── */
     .post-item{background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--r);padding:16px;margin-bottom:12px;transition:border-color .2s}
     .post-item:focus-within{border-color:var(--pp)}
     .post-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -126,12 +112,10 @@
     .remove-btn{color:var(--g400);background:none;border:none;cursor:pointer;font-size:18px;padding:2px;transition:color .2s}
     .remove-btn:hover{color:var(--d)}
 
-    /* ── الحالة الفارغة ── */
     .empty-state{padding:48px 20px;text-align:center;color:var(--g400)}
     .empty-state-icon{font-size:40px;margin-bottom:12px;opacity:.5}
     .empty-state p{font-size:13px;font-weight:600}
 
-    /* ── المودال ── */
     .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
     .modal-overlay.open{display:flex;animation:fadeIn .2s ease}
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -143,7 +127,6 @@
     .modal-close:hover{background:var(--g200)}
     .modal-footer{display:flex;gap:10px;margin-top:20px}
 
-    /* ── التوست ── */
     #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:12px 22px;border-radius:var(--r);font-size:13px;font-weight:700;z-index:9999;display:none;font-family:'Cairo';min-width:220px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.2)}
     #toast.show{display:block;animation:toastIn .3s ease}
     @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(14px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
@@ -161,20 +144,17 @@
 </head>
 <body>
 
-<!-- ── حالة التحميل ── -->
 <div id="s-loading" class="full-page">
   <div class="spinner"></div>
   <p>جاري تحميل بياناتك...</p>
 </div>
 
-<!-- ── حالة الخطأ ── -->
 <div id="s-notfound" class="full-page" style="display:none">
   <div class="error-icon">⚠️</div>
   <h2>الرابط غير صحيح</h2>
   <p>العميل غير موجود أو الرابط المستخدم غير صحيح. يرجى التواصل مع الدعم.</p>
 </div>
 
-<!-- ── التطبيق الرئيسي ── -->
 <div id="s-main" style="display:none">
 
   <div class="hdr">
@@ -212,7 +192,6 @@
     <button class="tab" onclick="switchTab('sched',this)">📅 عرض الجداول</button>
   </div>
 
-  <!-- ────── تاب الإضافة ────── -->
   <div id="tab-add" class="content">
     <div class="card">
       <div class="card-title">⚙️ إعدادات الجدولة</div>
@@ -246,7 +225,6 @@
     <button class="btn btn-primary" id="submitBtn" style="width:100%" onclick="submitPosts()">🚀 إرسال للجدولة الآن</button>
   </div>
 
-  <!-- ────── تاب الجداول ────── -->
   <div id="tab-sched" class="content" style="display:none">
     <div class="carousel-nav" id="carouselNav" style="display:none">
       <button class="nav-btn" onclick="prevSlide()" id="prevBtn" disabled>◀ السابق</button>
@@ -278,6 +256,10 @@
       <div class="field-error" id="errEditText">نص المنشور مطلوب</div>
     </div>
     <div class="field">
+      <label>المنصات</label>
+      <div id="editPlatforms" class="platform-checkboxes" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+    <div class="field">
       <label>وقت النشر <span class="req">*</span></label>
       <input type="datetime-local" id="editTime" onchange="clearErr(this,'errEditTime')">
       <div class="field-error" id="errEditTime">يجب اختيار وقت في المستقبل</div>
@@ -304,7 +286,6 @@
   </div>
 </div>
 
-<!-- ── التوست ── -->
 <div id="toast"></div>
 
 <script>
@@ -322,7 +303,6 @@ let postCnt = 0;
 let currentSlide = 0;
 let categories = [];
 
-// *** الإضافة الوحيدة: Map لتخزين بيانات المنشورات بالـ ID ***
 let schedMap = {};
 
 /* ═══════════════════════════════════════════════
@@ -331,7 +311,6 @@ let schedMap = {};
 async function init() {
   if (!clientId) { show('notfound'); return; }
 
-  // التحقق من صيغة UUID قبل إرسال أي طلب
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   if (!UUID_RE.test(clientId)) { show('notfound'); return; }
 
@@ -363,14 +342,12 @@ function show(id) {
 function renderMain() {
   document.getElementById('clientNameBadge').textContent = client.clint_name || 'عميل';
 
-  // تحذير الدفع
   if (!client.payment_status) {
     document.getElementById('paymentBanner').classList.add('show');
   }
 
   updateStats();
 
-  // تعيين الحد الأدنى للتاريخ = الغد
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = tomorrow.toISOString().split('T')[0];
@@ -382,9 +359,6 @@ function renderMain() {
   renderCarousel();
 }
 
-/* ═══════════════════════════════════════════════
-   الإحصائيات
-═══════════════════════════════════════════════ */
 function updateStats() {
   const now = new Date();
   const total = sched.length;
@@ -398,11 +372,7 @@ function updateStats() {
   document.getElementById('statLate').textContent = late;
 }
 
-/* ═══════════════════════════════════════════════
-   دوال المساعدة للحالات
-═══════════════════════════════════════════════ */
 function isPublished(status) {
-  // معالجة الخطأ الإملائي 'publishd' + الصيغة الصحيحة
   return status === 'published' || status === 'publishd';
 }
 
@@ -421,7 +391,7 @@ function getStatusInfo(p) {
 function addPost() {
   const platforms = client?.custom_config?.platforms || ['facebook'];
   const cats = Object.keys(client?.custom_config?.user_prompt || {});
-  posts.push({ id: ++postCnt, text: '', platform: platforms[0], category: cats[0] || 'general' });
+  posts.push({ id: ++postCnt, text: '', platforms: [...platforms], category: cats[0] || 'general' });
   renderPosts();
   updatePreview();
 }
@@ -436,6 +406,12 @@ function removePost(idx) {
   updatePreview();
 }
 
+function updatePlatformSelection(i) {
+  const checkboxes = document.querySelectorAll(`.plat-cb-${i}:checked`);
+  posts[i].platforms = Array.from(checkboxes).map(cb => cb.value);
+  updatePreview();
+}
+
 function renderPosts() {
   const platforms = client?.custom_config?.platforms || ['facebook'];
   const cats = Object.keys(client?.custom_config?.user_prompt || {});
@@ -443,6 +419,7 @@ function renderPosts() {
   document.getElementById('postsList').innerHTML = posts.map((p, i) => {
     const dt = calcPostDate(i);
     const dtLabel = dt ? formatDate(dt) : '';
+    if (!Array.isArray(p.platforms)) p.platforms = platforms;
     return `
       <div class="post-item">
         <div class="post-hdr">
@@ -461,19 +438,22 @@ function renderPosts() {
           >${escHtml(p.text)}</textarea>
           <div class="field-error" id="pe-${i}">نص المنشور مطلوب ولا يمكن أن يكون فارغاً</div>
         </div>
-        <div class="row2" style="margin-top:10px">
-          <div class="field" style="margin-bottom:0">
-            <label>المنصة</label>
-            <select onchange="posts[${i}].platform=this.value">
-              ${platforms.map(pl => `<option value="${pl}" ${p.platform===pl?'selected':''}>${platformLabel(pl)}</option>`).join('')}
-            </select>
+        <div style="margin-top:10px">
+          <label style="font-weight:700;font-size:12px;color:var(--g600)">المنصات</label>
+          <div class="platform-checkboxes" style="display:flex;flex-wrap:wrap;gap:6px">
+            ${platforms.map(pl => `
+              <label style="display:inline-flex;align-items:center;gap:3px;margin-left:12px;font-size:12px;">
+                <input type="checkbox" value="${pl}" class="plat-cb-${i}" ${(p.platforms).includes(pl)?'checked':''} onchange="updatePlatformSelection(${i})">
+                ${platformLabel(pl)}
+              </label>
+            `).join('')}
           </div>
-          <div class="field" style="margin-bottom:0">
-            <label>الفئة / النوع</label>
-            <select onchange="posts[${i}].category=this.value">
-              ${cats.map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}
-            </select>
-          </div>
+        </div>
+        <div class="field">
+          <label>الفئة / النوع</label>
+          <select onchange="posts[${i}].category=this.value">
+            ${cats.map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}
+          </select>
         </div>
       </div>
     `;
@@ -485,9 +465,6 @@ function platformLabel(pl) {
   return m[pl?.toLowerCase()] || pl;
 }
 
-/* ═══════════════════════════════════════════════
-   حساب التواريخ والمعاينة
-═══════════════════════════════════════════════ */
 function calcPostDate(idx) {
   const d = document.getElementById('startDate')?.value;
   const t = document.getElementById('postTime')?.value || '12:00';
@@ -505,7 +482,6 @@ function formatDate(dt) {
 }
 
 function onSettingsChange() {
-  // تحقق من التاريخ فور تغييره
   const d = document.getElementById('startDate').value;
   const t = document.getElementById('postTime').value || '12:00';
   const errEl = document.getElementById('errDate');
@@ -523,8 +499,8 @@ function onSettingsChange() {
     }
   }
 
-  renderPosts();   // تحديث معاينة التواريخ في المنشورات
-  updatePreview(); // تحديث صندوق الملخص
+  renderPosts();
+  updatePreview();
 }
 
 function updatePreview() {
@@ -552,9 +528,6 @@ function updatePreview() {
   `;
 }
 
-/* ═══════════════════════════════════════════════
-   إرسال المنشورات (Create)
-═══════════════════════════════════════════════ */
 async function submitPosts() {
   if (!validateForm()) return;
 
@@ -568,7 +541,7 @@ async function submitPosts() {
       client_id: clientId,
       workflow_id: client.workflow_id || null,
       post_text: p.text.trim(),
-      platform: p.platform,
+      platform: p.platforms,
       category: p.category,
       posting_time: dt.toISOString()
     };
@@ -602,7 +575,6 @@ async function submitPosts() {
 function validateForm() {
   let ok = true;
 
-  // التحقق من التاريخ
   const d = document.getElementById('startDate').value;
   const t = document.getElementById('postTime').value;
   const errDate = document.getElementById('errDate');
@@ -621,7 +593,6 @@ function validateForm() {
     return false;
   }
 
-  // التحقق من نصوص المنشورات
   posts.forEach((p, i) => {
     if (!p.text.trim()) {
       const ta = document.getElementById(`pt-${i}`);
@@ -636,9 +607,6 @@ function validateForm() {
   return ok;
 }
 
-/* ═══════════════════════════════════════════════
-   تحديث البيانات (بدون إعادة تحميل الصفحة)
-═══════════════════════════════════════════════ */
 async function refreshData() {
   try {
     const res = await fetch(`${N8N}/webhook/client-data?id=${encodeURIComponent(clientId)}`);
@@ -654,9 +622,6 @@ async function refreshData() {
   }
 }
 
-/* ═══════════════════════════════════════════════
-   الكاروسيل / عرض الجداول
-═══════════════════════════════════════════════ */
 function renderCarousel() {
   const nav = document.getElementById('carouselNav');
 
@@ -696,7 +661,6 @@ function updateCarouselView() {
     return;
   }
 
-  // *** الإصلاح: تخزين بيانات المنشورات في schedMap بدل تمريرها في onclick ***
   schedMap = {};
   filtered.forEach(p => { schedMap[p.id] = p; });
 
@@ -751,11 +715,6 @@ function updateCarouselView() {
 function prevSlide() { if (currentSlide > 0) { currentSlide--; updateCarouselView(); } }
 function nextSlide() { if (currentSlide < categories.length - 1) { currentSlide++; updateCarouselView(); } }
 
-/* ═══════════════════════════════════════════════
-   مودال التعديل
-═══════════════════════════════════════════════ */
-
-// *** الإصلاح: openEdit بتاخد ID بس وتجيب البيانات من schedMap ***
 function openEdit(id) {
   const p = schedMap[id];
   if (!p) return;
@@ -767,7 +726,6 @@ function openEdit(id) {
   document.getElementById('errEditText').style.display = 'none';
   document.getElementById('errEditTime').style.display = 'none';
 
-  // تحويل ISO → datetime-local
   if (p.posting_time) {
     const dtObj = new Date(p.posting_time);
     const local = new Date(dtObj.getTime() - dtObj.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
@@ -776,10 +734,22 @@ function openEdit(id) {
     document.getElementById('editTime').value = '';
   }
 
-  // تعيين الحد الأدنى = الآن
-  const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-  document.getElementById('editTime').min = nowLocal;
+  const platforms = client?.custom_config?.platforms || ['facebook'];
+  let currentPlatforms = [];
+  try {
+    currentPlatforms = typeof p.platform === 'string' ? JSON.parse(p.platform) : [];
+  } catch (e) {
+    currentPlatforms = [];
+  }
+  const container = document.getElementById('editPlatforms');
+  container.innerHTML = platforms.map(pl => `
+    <label style="display:inline-flex;align-items:center;gap:3px;margin-left:12px;font-size:12px;">
+      <input type="checkbox" value="${pl}" class="edit-plat-cb" ${currentPlatforms.includes(pl)?'checked':''}>
+      ${platformLabel(pl)}
+    </label>
+  `).join('');
 
+  document.getElementById('editTime').min = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
   openModal('editModal');
 }
 
@@ -788,6 +758,7 @@ async function saveEdit() {
   const category = document.getElementById('editCategory').value;
   const text = document.getElementById('editText').value.trim();
   const timeVal = document.getElementById('editTime').value;
+  const editPlatforms = Array.from(document.querySelectorAll('.edit-plat-cb:checked')).map(cb => cb.value);
 
   let ok = true;
 
@@ -818,7 +789,8 @@ async function saveEdit() {
           client_id: clientId,
           post_text: text,
           category: category,
-          posting_time: new Date(timeVal).toISOString()
+          posting_time: new Date(timeVal).toISOString(),
+          platform: editPlatforms
         }]
       })
     });
@@ -835,9 +807,6 @@ async function saveEdit() {
   }
 }
 
-/* ═══════════════════════════════════════════════
-   مودال الحذف
-═══════════════════════════════════════════════ */
 function openDelete(id) {
   document.getElementById('deleteId').value = id;
   openModal('deleteModal');
@@ -870,20 +839,14 @@ async function confirmDelete() {
   }
 }
 
-/* ═══════════════════════════════════════════════
-   التابات
-═══════════════════════════════════════════════ */
 function switchTab(name, btn) {
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
   document.getElementById('tab-add').style.display = name === 'add' ? 'block' : 'none';
   document.getElementById('tab-sched').style.display = name === 'sched' ? 'block' : 'none';
-  if (name === 'sched') refreshData(); // تحديث البيانات عند فتح تاب الجداول
+  if (name === 'sched') refreshData();
 }
 
-/* ═══════════════════════════════════════════════
-   دوال مساعدة للمودال، التوست، وغيرها
-═══════════════════════════════════════════════ */
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function handleOverlayClick(e, id) { if (e.target === e.currentTarget) closeModal(id); }
@@ -909,7 +872,6 @@ function toast(msg, type = 'success') {
   _toastTimer = setTimeout(() => { t.className = ''; }, 3800);
 }
 
-// دوال الأمان ضد XSS
 function escHtml(str) {
   return String(str ?? '')
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -922,7 +884,6 @@ function escJs(str) {
     .replace(/\n/g, '\\n').replace(/\r/g, '');
 }
 
-// بدء التطبيق
 init();
 </script>
 </body>
