@@ -1,797 +1,929 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Voice Video Merger</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام الجدولة الذكي | لوحة التحكم</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg:      #0a0c10;
-      --surface: #111418;
-      --border:  #1e2530;
-      --accent:  #00e5ff;
-      --accent2: #7b61ff;
-      --danger:  #ff4d6d;
-      --success: #00c896;
-      --text:    #e8edf5;
-      --muted:   #5a6478;
-      --radius:  16px;
-      --glow:    0 0 40px rgba(0,229,255,.15);
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --p:#4f46e5;--pl:#ede9fe;--pd:#3730a3;--pp:#6d64f0;
+      --s:#16a34a;--sl:#dcfce7;
+      --w:#d97706;--wl:#fef3c7;
+      --d:#dc2626;--dl:#fee2e2;
+      --g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;
+      --g300:#cbd5e1;--g400:#94a3b8;--g600:#475569;--g700:#334155;--g800:#1e293b;
+      --r:14px;--rs:9px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05)
     }
+    body{font-family:'Cairo',sans-serif;background:var(--g50);color:var(--g800);min-height:100vh}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ── حالات التحميل والخطأ ── */
+    .full-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;text-align:center;gap:14px}
+    .full-page h2{font-size:18px;color:var(--g800)}
+    .full-page p{font-size:14px;color:var(--g400)}
+    .spinner{width:44px;height:44px;border:3px solid var(--g200);border-top-color:var(--p);border-radius:50%;animation:spin .75s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .error-icon{font-size:48px}
 
-    html, body {
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'IBM Plex Sans Arabic', sans-serif;
-      overflow-x: hidden;
-    }
+    /* ── الهيدر ── */
+    .hdr{background:linear-gradient(135deg,var(--p) 0%,var(--pd) 100%);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(79,70,229,.35)}
+    .hdr-logo{display:flex;align-items:center;gap:10px}
+    .hdr-logo span{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px}
+    .client-badge{background:rgba(255,255,255,.18);backdrop-filter:blur(4px);color:#fff;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.25)}
 
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background:
-        radial-gradient(ellipse 70% 50% at 20% 20%, rgba(0,229,255,.06) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 60% at 80% 80%, rgba(123,97,255,.06) 0%, transparent 60%);
-      pointer-events: none;
-    }
+    /* ── شريط تحذير الدفع ── */
+    .payment-banner{background:var(--wl);border-bottom:2px solid #fbbf24;padding:10px 20px;text-align:center;font-size:13px;font-weight:700;color:#92400e;display:none;gap:8px;align-items:center;justify-content:center}
+    .payment-banner.show{display:flex}
 
-    .grid-bg {
-      position: fixed; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-      background-size: 60px 60px;
-      pointer-events: none;
-    }
+    /* ── الإحصائيات ── */
+    .stats{background:#fff;border-bottom:1px solid var(--g200);display:flex;overflow-x:auto}
+    .stat{padding:16px 20px;text-align:center;border-left:1px solid var(--g200);flex:1;min-width:110px;transition:background .2s}
+    .stat:last-child{border-left:none}
+    .stat-val{font-size:24px;font-weight:800;line-height:1;margin-bottom:5px}
+    .stat-lbl{font-size:11px;color:var(--g400);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 
-    .page {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem;
-      gap: 2rem;
-    }
+    /* ── التابات ── */
+    .tabs{background:#fff;border-bottom:1px solid var(--g200);display:flex;padding:0 16px;gap:4px}
+    .tab{padding:13px 18px;border:none;background:none;font-family:'Cairo';font-size:13px;font-weight:700;color:var(--g400);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;display:flex;align-items:center;gap:6px}
+    .tab.on{color:var(--p);border-bottom-color:var(--p)}
+    .tab:hover:not(.on){color:var(--g700);background:var(--g50)}
 
-    /* ── Header ── */
-    .header { text-align: center; animation: fadeUp .5s .1s ease both; }
-    .header h1 {
-      font-size: clamp(1.8rem, 5vw, 2.8rem);
-      font-weight: 700; letter-spacing: -.02em; line-height: 1.15;
-    }
-    .header h1 em {
-      font-style: normal;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .header p { margin-top: .75rem; color: var(--muted); font-size: .95rem; font-weight: 300; }
+    /* ── المحتوى ── */
+    .content{max-width:920px;margin:0 auto;padding:20px 14px}
 
-    /* ── Card ── */
-    .card {
-      width: 100%; max-width: 520px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2rem;
-      box-shadow: var(--glow);
-      animation: fadeUp .5s ease both;
-    }
+    /* ── البطاقات ── */
+    .card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+    .card-title{font-size:14px;font-weight:800;margin-bottom:16px;color:var(--g800);display:flex;align-items:center;gap:7px}
 
-    /* ── Drop Zone ── */
-    .drop-zone {
-      border: 2px dashed var(--border);
-      border-radius: 12px; padding: 2.5rem 1.5rem;
-      text-align: center; cursor: pointer;
-      transition: all .25s; position: relative;
-      background: rgba(255,255,255,.015);
-    }
-    .drop-zone:hover, .drop-zone.dragover {
-      border-color: var(--accent); background: rgba(0,229,255,.04);
-    }
-    .drop-zone input[type="file"] {
-      position: absolute; inset: 0;
-      opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
-    .drop-zone .icon { font-size: 2.5rem; margin-bottom: .8rem; display: block; }
-    .drop-zone .label { font-size: 1rem; font-weight: 500; margin-bottom: .4rem; }
-    .drop-zone .sublabel { font-size: .8rem; color: var(--muted); }
+    /* ── صندوق المعاينة ── */
+    .preview-box{background:var(--pl);border:1.5px solid #c4b5fd;border-radius:var(--rs);padding:11px 14px;margin-top:14px;font-size:12px;color:var(--pd);line-height:1.9;display:none}
+    .preview-box strong{font-weight:700}
 
-    /* ── File Info ── */
-    .file-info {
-      display: none; align-items: center; gap: 1rem;
-      background: rgba(0,229,255,.06);
-      border: 1px solid rgba(0,229,255,.25);
-      border-radius: 10px; padding: 1rem 1.2rem; margin-top: 1rem;
-    }
-    .file-info.show { display: flex; }
-    .file-info .file-icon {
-      width: 40px; height: 40px;
-      background: rgba(0,229,255,.15); border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; flex-shrink: 0;
-    }
-    .file-info .file-name { font-size: .88rem; font-weight: 500; color: var(--accent); word-break: break-all; }
-    .file-info .file-size { font-size: .75rem; color: var(--muted); margin-top: .15rem; }
-    .file-info .remove-btn {
-      margin-right: auto; background: none; border: none;
-      color: var(--muted); cursor: pointer; font-size: 1.1rem;
-      padding: .25rem; transition: color .2s; flex-shrink: 0;
-    }
-    .file-info .remove-btn:hover { color: var(--danger); }
+    /* ── الكاروسيل ── */
+    .carousel-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;background:#fff;padding:11px 14px;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--shadow)}
+    .nav-btn{background:var(--pl);color:var(--p);border:none;padding:6px 16px;border-radius:var(--rs);font-weight:700;cursor:pointer;font-family:'Cairo';font-size:13px;transition:all .2s}
+    .nav-btn:hover:not(:disabled){background:var(--p);color:#fff}
+    .nav-btn:disabled{opacity:.3;cursor:not-allowed}
+    .slide-title{font-weight:800;font-size:15px;color:var(--g800);text-align:center}
+    .slide-counter{font-size:11px;color:var(--g400);font-weight:600;margin-top:2px;text-align:center}
 
-    /* ── Size Warning ── */
-    .size-warning {
-      display: none; align-items: center; gap: .6rem;
-      margin-top: .6rem; padding: .6rem .9rem;
-      background: rgba(255,193,7,.07);
-      border: 1px solid rgba(255,193,7,.3);
-      border-radius: 8px; font-size: .78rem; color: #ffc107; line-height: 1.45;
-    }
-    .size-warning.show { display: flex; }
+    /* ── الجدول ── */
+    .table-wrap{overflow-x:auto;border-radius:var(--rs)}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{text-align:right;background:var(--g100);padding:11px 14px;color:var(--g600);font-weight:700;border-bottom:2px solid var(--g200);white-space:nowrap;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+    td{padding:12px 14px;border-bottom:1px solid var(--g100);vertical-align:middle}
+    tr:last-child td{border-bottom:none}
+    .row-published{background:rgba(22,163,74,.04)}
+    .row-pending{background:rgba(217,119,6,.03)}
+    .row-late{background:rgba(220,38,38,.04)}
+    .post-text-cell{max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--g600)}
+    .action-btns{display:flex;gap:6px;flex-wrap:wrap}
+    .btn-sm{padding:5px 10px;border-radius:6px;cursor:pointer;font-family:'Cairo';font-size:12px;font-weight:700;border:none;transition:all .2s}
+    .btn-sm:disabled{opacity:.5;cursor:not-allowed}
+    .btn-edit{color:var(--p);background:var(--pl)}
+    .btn-edit:hover:not(:disabled){background:var(--p);color:#fff}
+    .btn-delete{color:var(--d);background:var(--dl)}
+    .btn-delete:hover:not(:disabled){background:var(--d);color:#fff}
 
-    /* ── Submit Button ── */
-    .submit-btn {
-      margin-top: 1.5rem; width: 100%;
-      padding: .9rem 1.5rem;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border: none; border-radius: 10px;
-      color: #000; font-family: 'IBM Plex Sans Arabic', sans-serif;
-      font-size: 1rem; font-weight: 600; cursor: pointer;
-      transition: all .25s;
-      display: flex; align-items: center; justify-content: center; gap: .6rem;
-    }
-    .submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,255,.3); }
-    .submit-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    /* ── الشارات ── */
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+    .b-published{background:var(--sl);color:var(--s)}
+    .b-pending{background:var(--wl);color:var(--w)}
+    .b-late{background:var(--dl);color:var(--d)}
+    .b-failed{background:var(--dl);color:var(--d)}
 
-    /* ── Compress Section ── */
-    #compress-section { display: none; text-align: center; }
-    #compress-section.show { display: block; }
-    .compress-icon { font-size: 2.5rem; margin-bottom: .8rem; animation: breathe 1.5s ease-in-out infinite; display: block; }
-    .compress-title { font-size: 1.05rem; font-weight: 600; margin-bottom: .3rem; }
-    .compress-sub   { color: var(--muted); font-size: .82rem; margin-bottom: 1.1rem; }
-    .compress-bar-wrap {
-      background: rgba(255,255,255,.05); border: 1px solid var(--border);
-      border-radius: 999px; height: 6px; overflow: hidden; margin-bottom: .5rem;
-    }
-    .compress-bar-fill {
-      height: 100%; width: 0%; border-radius: 999px;
-      background: linear-gradient(90deg, #ffc107, #ff9800); transition: width .8s ease;
-    }
-    .compress-bar-fill::after {
-      content: ''; display: block; width: 40%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
-      animation: shimmer 1.8s infinite;
-    }
-    .compress-pct   { font-family: 'Space Mono', monospace; font-size: .72rem; color: #ffc107; }
-    .compress-sizes { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); font-family: 'Space Mono', monospace; margin-top: .4rem; }
+    /* ── الفورم ── */
+    .field{margin-bottom:14px}
+    label{display:block;font-size:12px;font-weight:700;color:var(--g600);margin-bottom:5px;letter-spacing:.2px}
+    label .req{color:var(--d);margin-right:2px}
+    input,select,textarea{width:100%;font-family:'Cairo';font-size:13px;border:1.5px solid var(--g200);border-radius:var(--rs);padding:9px 12px;outline:none;transition:border-color .2s,box-shadow .2s;background:#fff;color:var(--g800)}
+    input:focus,select:focus,textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+    input.err,textarea.err,select.err{border-color:var(--d);box-shadow:0 0 0 3px rgba(220,38,38,.1)}
+    .field-error{font-size:11px;color:var(--d);margin-top:4px;display:none;font-weight:600}
+    textarea{resize:vertical;min-height:115px;line-height:1.75}
+    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
-    /* ── Loading Section ── */
-    #loading-section { display: none; text-align: center; }
-    #loading-section.show { display: block; }
-    #loading-section.failed .loader-wrap,
-    #loading-section.failed .progress-bar-wrap,
-    #loading-section.failed .progress-steps { opacity: .1; filter: grayscale(100%); pointer-events: none; }
+    /* ── الأزرار الرئيسية ── */
+    .btn{font-family:'Cairo';font-size:13px;font-weight:700;padding:11px 20px;border-radius:var(--rs);border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;letter-spacing:.2px}
+    .btn-primary{background:var(--p);color:#fff;box-shadow:0 2px 8px rgba(79,70,229,.35)}
+    .btn-primary:hover:not(:disabled){background:var(--pd);transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,70,229,.4)}
+    .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .btn-secondary{background:#fff;border:1.5px solid var(--g200);color:var(--g600)}
+    .btn-secondary:hover{background:var(--g50);border-color:var(--g300)}
+    .btn-danger{background:var(--d);color:#fff}
+    .btn-danger:hover:not(:disabled){background:#b91c1c}
+    .btn-danger:disabled{opacity:.6;cursor:not-allowed}
 
-    .loader-wrap { position: relative; width: 80px; height: 80px; margin: 0 auto 1rem; }
-    .loader-ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid transparent; animation: spin 1.2s linear infinite; }
-    .loader-ring:nth-child(1) { border-top-color: var(--accent);   animation-duration: 1.2s; }
-    .loader-ring:nth-child(2) { border-right-color: var(--accent2); inset: 8px;  animation-duration: 1.8s; animation-direction: reverse; }
-    .loader-ring:nth-child(3) { border-bottom-color: var(--success);inset: 16px; animation-duration: 2.4s; }
-    .loader-core { position: absolute; inset: 24px; background: radial-gradient(circle, rgba(0,229,255,.2), transparent); border-radius: 50%; animation: breathe 2s ease-in-out infinite; }
+    /* ── بطاقة المنشور ── */
+    .post-item{background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--r);padding:16px;margin-bottom:12px;transition:border-color .2s}
+    .post-item:focus-within{border-color:var(--pp)}
+    .post-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .post-meta{display:flex;align-items:center;gap:10px}
+    .post-num{background:var(--p);color:#fff;width:26px;height:26px;border-radius:50%;text-align:center;font-size:12px;line-height:26px;font-weight:700;flex-shrink:0}
+    .post-date-preview{font-size:11px;color:var(--g400);font-weight:600;background:var(--g100);padding:3px 9px;border-radius:999px}
+    .remove-btn{color:var(--g400);background:none;border:none;cursor:pointer;font-size:18px;padding:2px;transition:color .2s}
+    .remove-btn:hover{color:var(--d)}
 
-    .loading-title { font-size: 1.05rem; font-weight: 600; margin-bottom: .3rem; }
-    .loading-sub { color: var(--muted); font-size: .82rem; }
+    /* ── الحالة الفارغة ── */
+    .empty-state{padding:48px 20px;text-align:center;color:var(--g400)}
+    .empty-state-icon{font-size:40px;margin-bottom:12px;opacity:.5}
+    .empty-state p{font-size:13px;font-weight:600}
 
-    .progress-bar-wrap {
-      margin: 1.1rem 0 .4rem;
-      background: rgba(255,255,255,.05); border: 1px solid var(--border);
-      border-radius: 999px; height: 6px; overflow: hidden;
-    }
-    .progress-bar-fill {
-      height: 100%; width: 0%; border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      transition: width 1.2s ease; box-shadow: 0 0 8px rgba(0,229,255,.5);
-    }
-    .progress-bar-fill::after {
-      content: ''; display: block; width: 40%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
-      animation: shimmer 1.8s infinite;
-    }
-    @keyframes shimmer { 0%{transform:translateX(-150%)} 100%{transform:translateX(350%)} }
+    /* ── المودال ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
+    .modal-overlay.open{display:flex;animation:fadeIn .2s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .modal{background:#fff;border-radius:calc(var(--r) + 2px);padding:26px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,.2);animation:slideUp .25s ease}
+    @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .modal-title{font-size:16px;font-weight:800;color:var(--g800)}
+    .modal-close{background:var(--g100);border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--g600);transition:all .2s}
+    .modal-close:hover{background:var(--g200)}
+    .modal-footer{display:flex;gap:10px;margin-top:20px}
 
-    .timer-row {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 1rem; font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--muted);
-    }
-    .timer-row .elapsed { color: var(--accent); }
+    /* ── التوست ── */
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:12px 22px;border-radius:var(--r);font-size:13px;font-weight:700;z-index:9999;display:none;font-family:'Cairo';min-width:220px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+    #toast.show{display:block;animation:toastIn .3s ease}
+    @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(14px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+    #toast.t-success{background:#16a34a;color:#fff}
+    #toast.t-error{background:var(--d);color:#fff}
+    #toast.t-warn{background:var(--w);color:#fff}
 
-    .progress-steps { display: flex; flex-direction: column; gap: .45rem; text-align: right; }
-    .step {
-      display: flex; align-items: center; justify-content: space-between; gap: .75rem;
-      padding: .55rem .9rem; border-radius: 8px;
-      background: rgba(255,255,255,.02); border: 1px solid transparent;
-      font-size: .8rem; color: var(--muted); transition: all .5s;
+    @media(max-width:580px){
+      .row3{grid-template-columns:1fr}
+      .row2{grid-template-columns:1fr}
+      .modal{padding:18px}
+      .hdr-logo span{font-size:13px}
     }
-    .step .step-left { display: flex; align-items: center; gap: .65rem; }
-    .step.active { color: var(--text); border-color: var(--accent); background: rgba(0,229,255,.05); }
-    .step.done   { color: var(--success); border-color: rgba(0,200,150,.3); background: rgba(0,200,150,.05); }
-    .step .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; transition: background .4s; }
-    .step.active .step-dot { background: var(--accent); animation: pulse 1s infinite; }
-    .step.done   .step-dot { background: var(--success); }
-    .step .step-eta { font-family: 'Space Mono', monospace; font-size: .65rem; color: var(--muted); white-space: nowrap; opacity: .6; }
-    .step.active .step-eta { color: var(--accent); opacity: 1; }
-    .step.done   .step-eta { color: var(--success); opacity: .8; }
-
-    .tips-box {
-      margin-top: 1.1rem; padding: .8rem 1rem; border-radius: 10px;
-      background: rgba(123,97,255,.06); border: 1px solid rgba(123,97,255,.2); text-align: right;
-    }
-    .tips-box .tip-label { font-size: .68rem; font-family: 'Space Mono', monospace; color: var(--accent2); letter-spacing: .06em; margin-bottom: .45rem; }
-    .tips-box .tip-text  { font-size: .8rem; color: var(--text); line-height: 1.55; min-height: 2.5rem; transition: opacity .4s; }
-
-    /* ── Result ── */
-    #result-section { display: none; }
-    #result-section.show { display: block; }
-    .result-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
-    .result-badge {
-      display: flex; align-items: center; gap: .5rem; padding: .4rem .9rem;
-      background: rgba(0,200,150,.1); border: 1px solid rgba(0,200,150,.3);
-      border-radius: 999px; color: var(--success); font-size: .8rem; font-weight: 500;
-    }
-    .result-badge::before { content: '✓'; font-weight: 700; }
-    .video-wrapper { border-radius: 12px; overflow: hidden; background: #000; border: 1px solid var(--border); box-shadow: 0 0 40px rgba(0,0,0,.5); }
-    #result-video { width: 100%; display: block; max-height: 320px; object-fit: contain; }
-    .result-actions { display: flex; gap: .75rem; margin-top: 1rem; }
-    .action-btn {
-      flex: 1; padding: .75rem; border-radius: 10px;
-      border: 1px solid var(--border); background: var(--surface); color: var(--text);
-      font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: .9rem; font-weight: 500;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: .5rem;
-      transition: all .2s; text-decoration: none;
-    }
-    .action-btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); border-color: transparent; color: #000; }
-    .action-btn:hover { transform: translateY(-2px); }
-    .action-btn.primary:hover { box-shadow: 0 6px 20px rgba(0,229,255,.3); }
-    .again-btn {
-      width: 100%; margin-top: 1rem; padding: .7rem;
-      background: none; border: 1px solid var(--border); border-radius: 10px;
-      color: var(--muted); font-family: 'IBM Plex Sans Arabic', sans-serif;
-      font-size: .88rem; cursor: pointer; transition: all .2s;
-    }
-    .again-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* ── Error ── */
-    .error-box {
-      display: none; margin-top: 1rem; padding: .9rem 1.1rem;
-      background: rgba(255,77,109,.08); border: 1px solid rgba(255,77,109,.3);
-      border-radius: 10px; color: var(--danger); font-size: .9rem; line-height: 1.6;
-    }
-    .error-box.show { display: block; }
-    .reload-page-btn {
-      display: none; margin-top: 1rem; width: 100%; padding: .8rem;
-      background: var(--surface); border: 1px solid var(--danger);
-      color: var(--danger); border-radius: 10px; cursor: pointer;
-      font-family: inherit; font-weight: 600;
-    }
-    .reload-page-btn.show { display: block; }
-    .reload-page-btn:hover { background: rgba(255,77,109,.1); }
-
-    .footer { text-align: center; font-size: .75rem; color: var(--muted); font-family: 'Space Mono', monospace; }
-
-    @keyframes pulse   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
-    @keyframes spin    { to{transform:rotate(360deg)} }
-    @keyframes breathe { 0%,100%{opacity:.4} 50%{opacity:1} }
-    @keyframes fadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
   </style>
 </head>
 <body>
-<div class="grid-bg"></div>
-<main class="page">
 
-  <header class="header">
-    <h1>دمج الصوت<br>مع <em>الفيديو</em></h1>
-    <p>ارفع ملف الصوت وسنتولى الباقي تلقائياً</p>
-  </header>
+<!-- ── حالة التحميل ── -->
+<div id="s-loading" class="full-page">
+  <div class="spinner"></div>
+  <p>جاري تحميل بياناتك...</p>
+</div>
 
-  <div class="card" id="upload-section">
-    <div class="drop-zone" id="drop-zone">
-      <input type="file" id="audio-file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.wma,.opus,.mp4" />
-      <span class="icon">🎵</span>
-      <div class="label">اسحب ملف الصوت هنا</div>
-      <div class="sublabel">أو انقر للاختيار — جميع صيغ الصوت مدعومة</div>
+<!-- ── حالة الخطأ ── -->
+<div id="s-notfound" class="full-page" style="display:none">
+  <div class="error-icon">⚠️</div>
+  <h2>الرابط غير صحيح</h2>
+  <p>العميل غير موجود أو الرابط المستخدم غير صحيح. يرجى التواصل مع الدعم.</p>
+</div>
+
+<!-- ── التطبيق الرئيسي ── -->
+<div id="s-main" style="display:none">
+
+  <div class="hdr">
+    <div class="hdr-logo">
+      <span>🗓 نظام الجدولة الذكي</span>
     </div>
-    <div class="file-info" id="file-info">
-      <div class="file-icon">🎵</div>
+    <span class="client-badge" id="clientNameBadge">—</span>
+  </div>
+
+  <div class="payment-banner" id="paymentBanner">
+    ⚠️ الاشتراك غير مفعّل — يرجى التواصل مع الدعم لتفعيل خدمتك
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val" id="statTotal" style="color:var(--p)">—</div>
+      <div class="stat-lbl">إجمالي</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="statPending" style="color:var(--w)">—</div>
+      <div class="stat-lbl">مجدول</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="statPublished" style="color:var(--s)">—</div>
+      <div class="stat-lbl">تم النشر</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="statLate" style="color:var(--d)">—</div>
+      <div class="stat-lbl">متأخر</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="switchTab('add',this)">➕ إضافة منشورات</button>
+    <button class="tab" onclick="switchTab('sched',this)">📅 عرض الجداول</button>
+  </div>
+
+  <!-- ────── تاب الإضافة ────── -->
+  <div id="tab-add" class="content">
+    <div class="card">
+      <div class="card-title">⚙️ إعدادات الجدولة</div>
+      <div class="row3">
+        <div class="field">
+          <label>تاريخ البداية <span class="req">*</span></label>
+          <input type="date" id="startDate" onchange="onSettingsChange()">
+          <div class="field-error" id="errDate">يجب اختيار تاريخ في المستقبل</div>
+        </div>
+        <div class="field">
+          <label>وقت النشر <span class="req">*</span></label>
+          <input type="time" id="postTime" value="12:00" onchange="onSettingsChange()">
+        </div>
+        <div class="field">
+          <label>التكرار بين المنشورات</label>
+          <select id="freq" onchange="onSettingsChange()">
+            <option value="1">كل يوم</option>
+            <option value="2">كل يومين</option>
+            <option value="3">كل 3 أيام</option>
+            <option value="7">أسبوعياً</option>
+            <option value="14">كل أسبوعين</option>
+          </select>
+        </div>
+      </div>
+      <div class="preview-box" id="previewBox"></div>
+    </div>
+
+    <div id="postsList"></div>
+
+    <button class="btn btn-secondary" style="width:100%;margin-bottom:10px" onclick="addPost()">＋ إضافة منشور آخر</button>
+    <button class="btn btn-primary" id="submitBtn" style="width:100%" onclick="submitPosts()">🚀 إرسال للجدولة الآن</button>
+  </div>
+
+  <!-- ────── تاب الجداول ────── -->
+  <div id="tab-sched" class="content" style="display:none">
+    <div class="carousel-nav" id="carouselNav" style="display:none">
+      <button class="nav-btn" onclick="prevSlide()" id="prevBtn" disabled>◀ السابق</button>
       <div>
-        <div class="file-name" id="file-name-text">—</div>
-        <div class="file-size" id="file-size-text">—</div>
+        <div class="slide-title" id="slideTitle">...</div>
+        <div class="slide-counter" id="slideCounter"></div>
       </div>
-      <button class="remove-btn" id="remove-btn" title="إزالة">✕</button>
+      <button class="nav-btn" onclick="nextSlide()" id="nextBtn">التالي ▶</button>
     </div>
-    <div class="size-warning" id="size-warning">
-      <span>⚠️</span>
-      <span id="size-warning-text"></span>
-    </div>
-    <div class="error-box" id="error-box"></div>
-    <button class="reload-page-btn" id="reload-page-btn" onclick="location.reload()">
-      🔄 إعادة تحميل الصفحة والبدء من جديد
-    </button>
-    <button class="submit-btn" id="submit-btn" disabled>
-      <span>🚀</span><span id="submit-label">ابدأ المعالجة</span>
-    </button>
-  </div>
-
-  <div class="card" id="compress-section">
-    <span class="compress-icon">🗜️</span>
-    <div class="compress-title">جاري ضغط الصوت…</div>
-    <div class="compress-sub">تقليص حجم الملف تلقائياً للتوافق مع الخادم</div>
-    <div class="compress-bar-wrap"><div class="compress-bar-fill" id="compress-fill"></div></div>
-    <div class="compress-pct" id="compress-pct">0%</div>
-    <div class="compress-sizes">
-      <span id="compress-original">الحجم الأصلي: —</span>
-      <span>الهدف: أقل من 1.5MB</span>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div id="tablesCarousel"></div>
     </div>
   </div>
 
-  <div class="card" id="loading-section">
-    <div class="loader-wrap">
-      <div class="loader-ring"></div><div class="loader-ring"></div>
-      <div class="loader-ring"></div><div class="loader-core"></div>
+</div>
+
+<!-- ════ مودال التعديل ════ -->
+<div class="modal-overlay" id="editModal" onclick="handleOverlayClick(event,'editModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">✏️ تعديل المنشور</div>
+      <button class="modal-close" onclick="closeModal('editModal')">✕</button>
     </div>
-    <div class="loading-title">جاري المعالجة…</div>
-    <div class="loading-sub">لا تُغلق هذه الصفحة أو تُغيّر التبويب</div>
-    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
-    <div class="timer-row">
-      <span class="elapsed" id="elapsed-display">00:00</span>
-      <span id="eta-display">الوقت المتوقع: ~2 دقيقة</span>
+    <input type="hidden" id="editId">
+    <input type="hidden" id="editCategory">
+    <div class="field">
+      <label>نص المنشور <span class="req">*</span></label>
+      <textarea id="editText" placeholder="نص المنشور..." oninput="clearErr(this,'errEditText')"></textarea>
+      <div class="field-error" id="errEditText">نص المنشور مطلوب</div>
     </div>
-    <div class="progress-steps">
-      <div class="step active" id="step-1">
-        <div class="step-left"><div class="step-dot"></div> رفع ملف الصوت</div>
-        <span class="step-eta">~5ث</span>
-      </div>
-      <div class="step" id="step-2">
-        <div class="step-left"><div class="step-dot"></div> تنزيل الفيديو  </div>
-        <span class="step-eta">~15ث</span>
-      </div>
-      <div class="step" id="step-3">
-        <div class="step-left"><div class="step-dot"></div> دمج الصوت والفيديو</div>
-        <span class="step-eta">~60ث</span>
-      </div>
-      <div class="step" id="step-4">
-        <div class="step-left"><div class="step-dot"></div> تجهيز الملف النهائي</div>
-        <span class="step-eta">~20ث</span>
-      </div>
+    <div class="field">
+      <label>وقت النشر <span class="req">*</span></label>
+      <input type="datetime-local" id="editTime" onchange="clearErr(this,'errEditTime')">
+      <div class="field-error" id="errEditTime">يجب اختيار وقت في المستقبل</div>
     </div>
-    <div class="tips-box">
-      <div class="tip-label">💡 تعليمات</div>
-      <div class="tip-text" id="tip-text">يعمل الخادم الآن على معالجة ملفك…</div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="saveEdit()" id="saveEditBtn">💾 حفظ التعديل</button>
+      <button class="btn btn-secondary" onclick="closeModal('editModal')">إلغاء</button>
     </div>
   </div>
+</div>
 
-  <div class="card" id="result-section">
-    <div class="result-header"><div class="result-badge">اكتملت المعالجة</div></div>
-    <div class="video-wrapper"><video id="result-video" controls playsinline></video></div>
-    <div class="result-actions">
-      <button class="action-btn" onclick="document.getElementById('result-video').play()">▶ مشاهدة</button>
-      <a class="action-btn primary" id="download-btn" download="output_video.mp4">⬇ تنزيل</a>
+<!-- ════ مودال الحذف ════ -->
+<div class="modal-overlay" id="deleteModal" onclick="handleOverlayClick(event,'deleteModal')">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="font-size:52px;margin-bottom:12px">🗑️</div>
+    <div class="modal-title" style="justify-content:center;margin-bottom:10px">تأكيد الحذف</div>
+    <p style="color:var(--g600);font-size:13px;line-height:1.8;margin-bottom:6px">هل أنت متأكد من حذف هذا المنشور نهائياً؟</p>
+    <p style="color:var(--d);font-size:12px;font-weight:700;margin-bottom:24px">⚠️ لا يمكن التراجع عن هذا الإجراء</p>
+    <input type="hidden" id="deleteId">
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn btn-danger" onclick="confirmDelete()" id="confirmDeleteBtn">نعم، احذف</button>
+      <button class="btn btn-secondary" onclick="closeModal('deleteModal')">إلغاء</button>
     </div>
-    <button class="again-btn" id="again-btn">↺ معالجة ملف آخر</button>
   </div>
+</div>
 
-  <footer class="footer">© جميع الحقوق محفوظة لخدمة المعالجة الصوتية والمرئية</footer>
-</main>
+<!-- ── التوست ── -->
+<div id="toast"></div>
 
 <script>
-// ════════════════════════════════════════════════════════════
-//  [1] مسح كل التخزين المحلي فور تحميل الصفحة
-// ════════════════════════════════════════════════════════════
-(function () {
+/* ═══════════════════════════════════════════════
+   الإعدادات والمتغيرات
+═══════════════════════════════════════════════ */
+const N8N = 'https://tasneemahmed-n8n-test.hf.space';
+const params = new URLSearchParams(location.search);
+const clientId = params.get('id');
+
+let client = null;
+let sched = [];
+let posts = [];
+let postCnt = 0;
+let currentSlide = 0;
+let categories = [];
+
+// *** الإضافة الوحيدة: Map لتخزين بيانات المنشورات بالـ ID ***
+let schedMap = {};
+
+/* ═══════════════════════════════════════════════
+   التهيئة والتحميل
+═══════════════════════════════════════════════ */
+async function init() {
+  if (!clientId) { show('notfound'); return; }
+
+  // التحقق من صيغة UUID قبل إرسال أي طلب
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID_RE.test(clientId)) { show('notfound'); return; }
+
   try {
-    localStorage.clear();
-    sessionStorage.clear();
+    const res = await fetch(`${N8N}/webhook/client-data?id=${encodeURIComponent(clientId)}`);
+    if (res.status === 404) { show('notfound'); return; }
+    const data = await res.json();
+    if (!data?.found) { show('notfound'); return; }
+
+    client = data;
+    sched = Array.isArray(data.scheduled_posts) ? data.scheduled_posts : [];
+    categories = Object.keys(client.custom_config?.user_prompt || {});
+
+    renderMain();
+    show('main');
   } catch (e) {
-  }
-})();
-
-// ════════════════════════════════════════════════════════════
-//  [2] الـ URLs الثابتة
-// ════════════════════════════════════════════════════════════
-const SUBMIT_URL = 'https://tasneemahmed-n8n.hf.space/webhook/03650388-1e05-48b5-89f9-8cdfffa78ce4';
-const POLL_URL   = 'https://tasneemahmed-n8n.hf.space/webhook/poll-video';
-
-// ════════════════════════════════════════════════════════════
-//  DOM refs
-// ════════════════════════════════════════════════════════════
-const dropZone       = document.getElementById('drop-zone');
-const fileInput      = document.getElementById('audio-file');
-const fileInfo       = document.getElementById('file-info');
-const fileNameTxt    = document.getElementById('file-name-text');
-const fileSizeTxt    = document.getElementById('file-size-text');
-const removeBtn      = document.getElementById('remove-btn');
-const submitBtn      = document.getElementById('submit-btn');
-const submitLabel    = document.getElementById('submit-label');
-const uploadSec      = document.getElementById('upload-section');
-const compressSec    = document.getElementById('compress-section');
-const loadingSec     = document.getElementById('loading-section');
-const resultSec      = document.getElementById('result-section');
-const errorBox       = document.getElementById('error-box');
-const reloadPageBtn  = document.getElementById('reload-page-btn');
-const resultVideo    = document.getElementById('result-video');
-const downloadBtn    = document.getElementById('download-btn');
-const againBtn       = document.getElementById('again-btn');
-const progressFill   = document.getElementById('progress-fill');
-const elapsedDisp    = document.getElementById('elapsed-display');
-const etaDisp        = document.getElementById('eta-display');
-const tipText        = document.getElementById('tip-text');
-const sizeWarning    = document.getElementById('size-warning');
-const sizeWarningTxt = document.getElementById('size-warning-text');
-const compressFill   = document.getElementById('compress-fill');
-const compressPct    = document.getElementById('compress-pct');
-const compressOrig   = document.getElementById('compress-original');
-
-// ════════════════════════════════════════════════════════════
-//  State
-// ════════════════════════════════════════════════════════════
-let selectedFile    = null;
-let pollingInterval = null;
-let elapsedInterval = null;
-let wakeLock        = null;
-let startTime       = 0;
-
-// ════════════════════════════════════════════════════════════
-//  Config
-// ════════════════════════════════════════════════════════════
-const POLL_INTERVAL_MS  = 5000;
-const POLL_TIMEOUT_MS   = 12 * 60 * 1000;
-const UPLOAD_TIMEOUT_MS = 10 * 60 * 1000;
-const EST_TOTAL_SEC     = 120;
-const MAX_SAFE_SIZE     = 1.4 * 1024 * 1024;
-const COMPRESS_BITRATE  = 64_000;
-
-// ════════════════════════════════════════════════════════════
-//  Tips
-// ════════════════════════════════════════════════════════════
-const TIPS = [
-  'يعمل الخادم الآن على معالجة ملفك — هذا قد يستغرق بضع دقائق حسب طول الصوت.',
-  '⚠️ لا تُغلق هذه النافذة أو التبويب — المعالجة تعمل في الخلفية وستكتمل تلقائياً.',
-  '📱 إذا كنت على هاتف، أبقِ الشاشة مضاءة لتجنب انقطاع الاتصال.',
-  '⏳ الوقت المتوقع للمعالجة: دقيقة إلى دقيقتين حسب حجم ملف الصوت.',
-  '🔄 ستنتقل للنتيجة فور الانتهاء.',
-  '✅ بعد اكتمال المعالجة ستظهر لك شاشة المعاينة والتنزيل مباشرةً.',
-];
-let tipIndex = 0, tipTimer = null;
-function startTips() {
-  tipIndex = 0; tipText.textContent = TIPS[0];
-  tipTimer = setInterval(() => {
-    tipText.style.opacity = '0';
-    setTimeout(() => { tipIndex = (tipIndex+1)%TIPS.length; tipText.textContent = TIPS[tipIndex]; tipText.style.opacity = '1'; }, 400);
-  }, 12000);
-}
-function stopTips() { if (tipTimer) { clearInterval(tipTimer); tipTimer = null; } }
-
-// ════════════════════════════════════════════════════════════
-//  Elapsed Timer
-// ════════════════════════════════════════════════════════════
-function startElapsedTimer() {
-  elapsedInterval = setInterval(() => {
-    const sec = Math.floor((Date.now() - startTime) / 1000);
-    elapsedDisp.textContent = `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
-    progressFill.style.width = Math.min((sec/EST_TOTAL_SEC)*90, 90) + '%';
-    const rem = Math.max(EST_TOTAL_SEC - sec, 0);
-    etaDisp.textContent = rem > 0 ? `متبقي تقريباً: ~${rem}ث` : 'يُكمل المعالجة…';
-  }, 1000);
-}
-function stopElapsedTimer() { if (elapsedInterval) { clearInterval(elapsedInterval); elapsedInterval = null; } }
-
-// ════════════════════════════════════════════════════════════
-//  Steps
-// ════════════════════════════════════════════════════════════
-const STEP_AT = { 2: 3, 3: 18, 4: 70 };
-function updateStepsFromElapsed(sec) {
-  let cur = 2;
-  if (sec >= STEP_AT[4]) cur = 4; else if (sec >= STEP_AT[3]) cur = 3;
-  for (let i = 1; i <= 4; i++) {
-    const s = document.getElementById(`step-${i}`);
-    if (!s || s.classList.contains('done')) continue;
-    s.classList.remove('active','done');
-    if (i < cur) s.classList.add('done'); else if (i === cur) s.classList.add('active');
+    console.error('Init error:', e);
+    show('notfound');
   }
 }
-function setStepDone(n)    { const s = document.getElementById(`step-${n}`); if (s) { s.classList.remove('active'); s.classList.add('done'); } }
-function setAllStepsDone() { for (let i = 1; i <= 4; i++) setStepDone(i); }
-function resetSteps()      {
-  for (let i = 1; i <= 4; i++) { const s = document.getElementById(`step-${i}`); if (s) s.classList.remove('active','done'); }
-  document.getElementById('step-1').classList.add('active');
-}
 
-// ════════════════════════════════════════════════════════════
-//  Section Visibility
-// ════════════════════════════════════════════════════════════
-function showSection(name) {
-  uploadSec  .style.display = name === 'upload'   ? 'block' : 'none';
-  compressSec.style.display = name === 'compress' ? 'block' : 'none';
-  loadingSec .style.display = name === 'loading'  ? 'block' : 'none';
-  resultSec  .style.display = name === 'result'   ? 'block' : 'none';
-}
-
-// ════════════════════════════════════════════════════════════
-//  Wake Lock & Guards
-// ════════════════════════════════════════════════════════════
-async function requestWakeLock() { try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {} }
-async function releaseWakeLock() { if (wakeLock) { try { await wakeLock.release(); wakeLock = null; } catch(e) {} } }
-function enableExitProtection()  { window.onbeforeunload = () => 'جاري المعالجة... هل أنت متأكد؟'; }
-function disableExitProtection() { window.onbeforeunload = null; }
-
-function cleanup() {
-  disableExitProtection(); releaseWakeLock(); stopElapsedTimer(); stopTips();
-  if (pollingInterval) { clearInterval(pollingInterval); pollingInterval = null; }
-  window.removeEventListener('offline', handleOffline);
-}
-function handleOffline() {
-  cleanup();
-  showFatalError('❌ انقطع الاتصال بالإنترنت! أعد تحميل الصفحة وحاول مرة أخرى.');
-  showSection('upload');
-}
-
-// ════════════════════════════════════════════════════════════
-//  Fetch with Timeout
-// ════════════════════════════════════════════════════════════
-function fetchWithTimeout(url, options, ms) {
-  const ctrl = new AbortController();
-  const t    = setTimeout(() => ctrl.abort(), ms);
-  return fetch(url, { ...options, signal: ctrl.signal }).finally(() => clearTimeout(t));
-}
-
-// ════════════════════════════════════════════════════════════
-//  Error Helpers
-// ════════════════════════════════════════════════════════════
-function showError(msg)      { errorBox.textContent = msg; errorBox.classList.add('show'); }
-function showFatalError(msg) { showError(msg); loadingSec.classList.add('failed'); reloadPageBtn.classList.add('show'); submitBtn.style.display = 'none'; }
-function hideError()         { errorBox.classList.remove('show'); errorBox.textContent = ''; reloadPageBtn.classList.remove('show'); submitBtn.style.display = 'flex'; loadingSec.classList.remove('failed'); }
-
-// ════════════════════════════════════════════════════════════
-//  Format Bytes
-// ════════════════════════════════════════════════════════════
-function formatBytes(b) {
-  if (b < 1024)    return b + ' B';
-  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
-  return (b/1048576).toFixed(2) + ' MB';
-}
-
-// ════════════════════════════════════════════════════════════
-//  Audio Compression
-// ════════════════════════════════════════════════════════════
-async function compressAudio(file, onProgress) {
-  const buf     = await file.arrayBuffer();
-  const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  if (!AudioCtx) throw new Error('خاصية معالجة الصوت غير مدعومة في هذا المتصفح');
-  const ctx = new AudioCtx();
-  let audioBuffer;
-  try   { audioBuffer = await ctx.decodeAudioData(buf); }
-  catch (e) { ctx.close(); throw new Error('تعذّر فك ترميز ملف الصوت. يرجى تجربة ملف آخر.'); }
-
-  const types = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/ogg',''];
-  const mime  = types.find(t => !t || MediaRecorder.isTypeSupported(t)) || '';
-  const dest  = ctx.createMediaStreamDestination();
-  const src   = ctx.createBufferSource();
-  src.buffer  = audioBuffer; src.connect(dest);
-
-  const opts = { audioBitsPerSecond: COMPRESS_BITRATE };
-  if (mime) opts.mimeType = mime;
-
-  let rec;
-  try   { rec = new MediaRecorder(dest.stream, opts); }
-  catch (e) { ctx.close(); throw new Error('المتصفح لا يدعم ضغط الملف. يرجى تحديث المتصفح.'); }
-
-  const chunks = [];
-  return new Promise((resolve, reject) => {
-    rec.ondataavailable = e => { if (e.data?.size > 0) chunks.push(e.data); };
-    rec.onerror  = e  => { ctx.close(); reject(new Error('حدث خطأ أثناء تقليص حجم الملف.')); };
-    rec.onstop   = () => {
-      ctx.close();
-      const fm  = mime || 'audio/webm';
-      const ext = fm.includes('ogg') ? 'ogg' : 'webm';
-      resolve(new File([new Blob(chunks, { type: fm })], file.name.replace(/\.[^.]+$/, '') + '.' + ext, { type: fm }));
-    };
-    const dur = audioBuffer.duration, t0 = Date.now();
-    const iv  = setInterval(() => {
-      const p = Math.min((Date.now()-t0)/1000/dur, 0.97);
-      onProgress?.(p); if (p >= 0.97) clearInterval(iv);
-    }, 300);
-    src.onended = () => { clearInterval(iv); onProgress?.(1); rec.stop(); };
-    src.start(0); rec.start(200);
+function show(id) {
+  ['loading', 'notfound', 'main'].forEach(s => {
+    const el = document.getElementById('s-' + s);
+    if (el) el.style.display = s === id ? 'block' : 'none';
   });
 }
 
-// ════════════════════════════════════════════════════════════
-//  Size Warning
-// ════════════════════════════════════════════════════════════
-function updateSizeWarning(file) {
-  if (!file || file.size <= MAX_SAFE_SIZE) {
-    sizeWarning.classList.remove('show');
-    submitLabel.textContent = 'ابدأ المعالجة';
+function renderMain() {
+  document.getElementById('clientNameBadge').textContent = client.clint_name || 'عميل';
+
+  // تحذير الدفع
+  if (!client.payment_status) {
+    document.getElementById('paymentBanner').classList.add('show');
+  }
+
+  updateStats();
+
+  // تعيين الحد الأدنى للتاريخ = الغد
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const minDate = tomorrow.toISOString().split('T')[0];
+  const dateInput = document.getElementById('startDate');
+  dateInput.min = minDate;
+  dateInput.value = minDate;
+
+  addPost();
+  renderCarousel();
+}
+
+/* ═══════════════════════════════════════════════
+   الإحصائيات
+═══════════════════════════════════════════════ */
+function updateStats() {
+  const now = new Date();
+  const total = sched.length;
+  const published = sched.filter(p => isPublished(p.status)).length;
+  const late = sched.filter(p => !isPublished(p.status) && p.posting_time && new Date(p.posting_time) < now).length;
+  const pending = total - published - late;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statPublished').textContent = published;
+  document.getElementById('statLate').textContent = late;
+}
+
+/* ═══════════════════════════════════════════════
+   دوال المساعدة للحالات
+═══════════════════════════════════════════════ */
+function isPublished(status) {
+  // معالجة الخطأ الإملائي 'publishd' + الصيغة الصحيحة
+  return status === 'published' || status === 'publishd';
+}
+
+function getStatusInfo(p) {
+  const now = new Date();
+  const dt = p.posting_time ? new Date(p.posting_time) : null;
+  if (isPublished(p.status)) return { label: '✅ تم النشر', cls: 'b-published', rowCls: 'row-published' };
+  if (p.status === 'failed') return { label: '❌ فشل النشر', cls: 'b-failed', rowCls: 'row-late' };
+  if (dt && dt < now) return { label: '⚠️ متأخر', cls: 'b-late', rowCls: 'row-late' };
+  return { label: '🕐 مجدول', cls: 'b-pending', rowCls: 'row-pending' };
+}
+
+/* ═══════════════════════════════════════════════
+   إضافة وإدارة المنشورات (نموذج الإضافة)
+═══════════════════════════════════════════════ */
+function addPost() {
+  const platforms = client?.custom_config?.platforms || ['facebook'];
+  const cats = Object.keys(client?.custom_config?.user_prompt || {});
+  posts.push({ id: ++postCnt, text: '', platform: platforms[0], category: cats[0] || 'general' });
+  renderPosts();
+  updatePreview();
+}
+
+function removePost(idx) {
+  if (posts.length <= 1) {
+    toast('يجب أن يكون هناك منشور واحد على الأقل', 'warn');
     return;
   }
-  sizeWarningTxt.textContent = `حجم الملف (${formatBytes(file.size)}) كبير نسبياً. سيتم تقليصه تلقائياً قبل المعالجة لتسريع العملية.`;
-  sizeWarning.classList.add('show');
-  submitLabel.textContent = 'تجهيز ورفع';
+  posts.splice(idx, 1);
+  renderPosts();
+  updatePreview();
 }
 
-// ════════════════════════════════════════════════════════════
-//  File Handling
-// ════════════════════════════════════════════════════════════
-function setFile(file) {
-  if (!file) return;
-  selectedFile = file;
-  fileNameTxt.textContent = file.name;
-  fileSizeTxt.textContent = formatBytes(file.size);
-  fileInfo.classList.add('show');
-  submitBtn.disabled = false;
-  hideError();
-  updateSizeWarning(file);
+function renderPosts() {
+  const platforms = client?.custom_config?.platforms || ['facebook'];
+  const cats = Object.keys(client?.custom_config?.user_prompt || {});
+
+  document.getElementById('postsList').innerHTML = posts.map((p, i) => {
+    const dt = calcPostDate(i);
+    const dtLabel = dt ? formatDate(dt) : '';
+    return `
+      <div class="post-item">
+        <div class="post-hdr">
+          <div class="post-meta">
+            <div class="post-num">${i + 1}</div>
+            ${dtLabel ? `<span class="post-date-preview">📅 ${dtLabel}</span>` : ''}
+          </div>
+          <button class="remove-btn" onclick="removePost(${i})" title="حذف المنشور">🗑️</button>
+        </div>
+        <div class="field">
+          <label>نص المنشور <span class="req">*</span></label>
+          <textarea
+            id="pt-${i}"
+            oninput="posts[${i}].text=this.value;clearErr(this,'pe-${i}')"
+            placeholder="اكتب نص المنشور هنا..."
+          >${escHtml(p.text)}</textarea>
+          <div class="field-error" id="pe-${i}">نص المنشور مطلوب ولا يمكن أن يكون فارغاً</div>
+        </div>
+        <div class="row2" style="margin-top:10px">
+          <div class="field" style="margin-bottom:0">
+            <label>المنصة</label>
+            <select onchange="posts[${i}].platform=this.value">
+              ${platforms.map(pl => `<option value="${pl}" ${p.platform===pl?'selected':''}>${platformLabel(pl)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>الفئة / النوع</label>
+            <select onchange="posts[${i}].category=this.value">
+              ${cats.map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
-function clearFile() {
-  selectedFile = null; fileInput.value = '';
-  fileInfo.classList.remove('show'); sizeWarning.classList.remove('show');
-  submitLabel.textContent = 'ابدأ المعالجة'; submitBtn.disabled = true;
+
+function platformLabel(pl) {
+  const m = { facebook:'📘 Facebook', instagram:'📸 Instagram', twitter:'🐦 Twitter', x:'🐦 X', linkedin:'💼 LinkedIn', tiktok:'🎵 TikTok' };
+  return m[pl?.toLowerCase()] || pl;
 }
 
-fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
-removeBtn.addEventListener('click', e => { e.preventDefault(); clearFile(); });
-dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault(); dropZone.classList.remove('dragover');
-  const f = e.dataTransfer?.files?.[0]; if (f) setFile(f);
-});
+/* ═══════════════════════════════════════════════
+   حساب التواريخ والمعاينة
+═══════════════════════════════════════════════ */
+function calcPostDate(idx) {
+  const d = document.getElementById('startDate')?.value;
+  const t = document.getElementById('postTime')?.value || '12:00';
+  const f = parseInt(document.getElementById('freq')?.value || '1');
+  if (!d) return null;
+  const dt = new Date(`${d}T${t}:00`);
+  if (isNaN(dt)) return null;
+  dt.setDate(dt.getDate() + idx * f);
+  return dt;
+}
 
-// ════════════════════════════════════════════════════════════
-//  SUBMIT
-// ════════════════════════════════════════════════════════════
-submitBtn.addEventListener('click', async () => {
-  hideError();
-  if (!navigator.onLine) { showFatalError('❌ لا يوجد اتصال بالإنترنت.'); return; }
-  if (!selectedFile)     { showError('⚠️ اختر ملفاً أولاً'); return; }
+function formatDate(dt) {
+  return dt.toLocaleDateString('ar-EG', { weekday:'short', year:'numeric', month:'short', day:'numeric' })
+    + ' — ' + dt.toLocaleTimeString('ar-EG', { hour:'2-digit', minute:'2-digit' });
+}
 
-  await requestWakeLock();
-  enableExitProtection();
-  window.addEventListener('offline', handleOffline);
+function onSettingsChange() {
+  // تحقق من التاريخ فور تغييره
+  const d = document.getElementById('startDate').value;
+  const t = document.getElementById('postTime').value || '12:00';
+  const errEl = document.getElementById('errDate');
+  const dateInput = document.getElementById('startDate');
 
-  // ── ضغط إذا لزم ───────────────────────────────────────────
-  let fileToUpload = selectedFile;
-  if (selectedFile.size > MAX_SAFE_SIZE) {
-    showSection('compress');
-    compressFill.style.width = '0%'; compressPct.textContent = '0%';
-    compressOrig.textContent = `الحجم الأصلي: ${formatBytes(selectedFile.size)}`;
-    try {
-      fileToUpload = await compressAudio(selectedFile, p => {
-        const pct = Math.round(p * 100);
-        compressFill.style.width = pct + '%'; compressPct.textContent = pct + '%';
-      });
-    } catch(err) {
-      cleanup(); showError('❌ حدث خطأ أثناء تجهيز الملف: ' + err.message); showSection('upload'); return;
-    }
-  }
-
-  // ── رفع الملف ──────────────────────────────────────────────
-  showSection('loading');
-  resetSteps();
-  progressFill.style.width = '0%'; elapsedDisp.textContent = '00:00';
-  etaDisp.textContent = 'الوقت المتوقع: ~2 دقيقة';
-  startTips();
-
-  let jobId = null;
-  try {
-    const form = new FormData();
-    form.append('audio_file', fileToUpload, fileToUpload.name);
-
-    const res = await fetchWithTimeout(SUBMIT_URL, { method: 'POST', body: form }, UPLOAD_TIMEOUT_MS);
-
-    const buffer      = await res.arrayBuffer();
-    const bytes       = new Uint8Array(buffer);
-    const contentType = res.headers.get('Content-Type') || '';
-    const rawText     = new TextDecoder().decode(buffer.slice(0, 400));
-
-    if (!res.ok) {
-      if (res.status === 413) throw new Error(`❌ حجم الملف يتجاوز الحد المسموح به. يرجى تجربة ملف صوتي أقصر.`);
-      if (res.status === 500) throw new Error(`❌ هناك ضغط على الخادم حالياً. يرجى الانتظار قليلاً والمحاولة مرة أخرى.`);
-      if ([502,503,504].includes(res.status)) throw new Error(`❌ الخدمة غير متاحة مؤقتاً. يرجى الانتظار دقيقة والمحاولة مجدداً.`);
-      throw new Error(`❌ حدث خطأ غير متوقع أثناء الرفع. يرجى المحاولة لاحقاً.`);
-    }
-
-    // MP4 مباشر؟
-    const isMp4 = bytes.length > 8 && bytes[4]===0x66 && bytes[5]===0x74 && bytes[6]===0x79 && bytes[7]===0x70;
-    if (isMp4 || contentType.includes('video')) {
-      const url = URL.createObjectURL(new Blob([buffer], { type: 'video/mp4' }));
-      progressFill.style.width = '100%'; setAllStepsDone();
-      resultVideo.src = url; downloadBtn.href = url;
-      cleanup(); setTimeout(() => showSection('result'), 400); return;
-    }
-
-    // JSON → job_id
-    if (contentType.includes('json') || rawText.trim().startsWith('{')) {
-      let data;
-      try { data = JSON.parse(new TextDecoder().decode(buffer)); } catch { throw new Error(`❌ استجابة النظام غير مفهومة. يرجى المحاولة لاحقاً.`); }
-      jobId = data.job_id;
-      if (!jobId) throw new Error(`❌ فشل النظام في استلام الطلب بشكل صحيح. يرجى المحاولة لاحقاً.`);
-      setStepDone(1); startTime = Date.now(); startElapsedTimer();
+  if (d && t) {
+    const dt = new Date(`${d}T${t}:00`);
+    const now = new Date();
+    if (dt <= now) {
+      dateInput.classList.add('err');
+      errEl.style.display = 'block';
     } else {
-      throw new Error(`❌ حدث خطأ داخلي في النظام. يرجى المحاولة لاحقاً.`);
+      dateInput.classList.remove('err');
+      errEl.style.display = 'none';
     }
-
-  } catch(err) {
-    cleanup();
-    showFatalError(err.name === 'AbortError' ? '❌ انتهت مهلة الرفع — قد يكون الملف كبيراً جداً أو اتصال الإنترنت لديك بطيء.' : (err.message || '❌ حدث خطأ غير متوقع'));
-    showSection('upload'); return;
   }
 
-  // ── Polling ────────────────────────────────────────────────
-  let attempts = 0;
+  renderPosts();   // تحديث معاينة التواريخ في المنشورات
+  updatePreview(); // تحديث صندوق الملخص
+}
 
-  pollingInterval = setInterval(async () => {
-    const elapsed = Date.now() - startTime; attempts++;
-    updateStepsFromElapsed(Math.floor(elapsed / 1000));
+function updatePreview() {
+  const box = document.getElementById('previewBox');
+  const d = document.getElementById('startDate')?.value;
+  const t = document.getElementById('postTime')?.value || '12:00';
 
-    if (elapsed > POLL_TIMEOUT_MS) {
-      cleanup(); showFatalError('❌ نعتذر، استغرقت المعالجة وقتاً أطول من المتوقع. يرجى المحاولة بملف أقصر.'); showSection('upload'); return;
+  if (!d) { box.style.display = 'none'; return; }
+
+  const startDt = new Date(`${d}T${t}:00`);
+  const now = new Date();
+  if (isNaN(startDt) || startDt <= now) { box.style.display = 'none'; return; }
+
+  const freq = parseInt(document.getElementById('freq').value);
+  const freqLabels = { 1:'يومياً', 2:'كل يومين', 3:'كل 3 أيام', 7:'أسبوعياً', 14:'كل أسبوعين' };
+  const freqLabel = freqLabels[freq] || `كل ${freq} أيام`;
+  const lastDt = calcPostDate(posts.length - 1);
+
+  box.style.display = 'block';
+  box.innerHTML = `
+    📋 <strong>${posts.length}</strong> منشور سيُجدَّول |
+    أول نشر: <strong>${formatDate(startDt)}</strong> |
+    آخر نشر: <strong>${formatDate(lastDt)}</strong> |
+    التكرار: <strong>${freqLabel}</strong>
+  `;
+}
+
+/* ═══════════════════════════════════════════════
+   إرسال المنشورات (Create)
+═══════════════════════════════════════════════ */
+async function submitPosts() {
+  if (!validateForm()) return;
+
+  const d = document.getElementById('startDate').value;
+  const t = document.getElementById('postTime').value;
+  const f = parseInt(document.getElementById('freq').value);
+
+  const payload = posts.map((p, i) => {
+    const dt = calcPostDate(i);
+    return {
+      client_id: clientId,
+      workflow_id: client.workflow_id || null,
+      post_text: p.text.trim(),
+      platform: p.platform,
+      category: p.category,
+      posting_time: dt.toISOString()
+    };
+  });
+
+  const btn = document.getElementById('submitBtn');
+  setLoading(btn, true, '⏳ جاري الحفظ...');
+
+  try {
+    const res = await fetch(`${N8N}/webhook/submit-posts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create', posts: payload })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    toast('✅ تم حفظ المنشورات بنجاح', 'success');
+    posts = [];
+    postCnt = 0;
+    addPost();
+    await refreshData();
+  } catch (e) {
+    console.error('Submit error:', e);
+    toast('❌ خطأ في الإرسال — يرجى المحاولة مرة أخرى', 'error');
+  } finally {
+    setLoading(btn, false, '🚀 إرسال للجدولة الآن');
+  }
+}
+
+function validateForm() {
+  let ok = true;
+
+  // التحقق من التاريخ
+  const d = document.getElementById('startDate').value;
+  const t = document.getElementById('postTime').value;
+  const errDate = document.getElementById('errDate');
+  const dateInput = document.getElementById('startDate');
+
+  if (!d || !t) {
+    toast('⚠️ حدد تاريخ ووقت البداية أولاً', 'warn');
+    return false;
+  }
+
+  const startDt = new Date(`${d}T${t}:00`);
+  if (startDt <= new Date()) {
+    dateInput.classList.add('err');
+    errDate.style.display = 'block';
+    toast('⚠️ يجب أن يكون تاريخ البداية في المستقبل', 'warn');
+    return false;
+  }
+
+  // التحقق من نصوص المنشورات
+  posts.forEach((p, i) => {
+    if (!p.text.trim()) {
+      const ta = document.getElementById(`pt-${i}`);
+      const er = document.getElementById(`pe-${i}`);
+      if (ta) ta.classList.add('err');
+      if (er) er.style.display = 'block';
+      ok = false;
     }
+  });
 
-    try {
-      const res = await fetchWithTimeout(`${POLL_URL}?job_id=${encodeURIComponent(jobId)}`, { method: 'GET' }, 30000);
-      if (!res.ok) { return; }
+  if (!ok) toast('⚠️ يرجى تعبئة نص جميع المنشورات', 'warn');
+  return ok;
+}
 
-      const buffer = await res.arrayBuffer();
-      const bytes  = new Uint8Array(buffer);
-      const ct     = res.headers.get('Content-Type') || '';
-      const isMp4  = bytes.length > 8 && bytes[4]===0x66 && bytes[5]===0x74 && bytes[6]===0x79 && bytes[7]===0x70;
-      const isVideo = ct.includes('video') || ct.includes('octet-stream') || isMp4;
+/* ═══════════════════════════════════════════════
+   تحديث البيانات (بدون إعادة تحميل الصفحة)
+═══════════════════════════════════════════════ */
+async function refreshData() {
+  try {
+    const res = await fetch(`${N8N}/webhook/client-data?id=${encodeURIComponent(clientId)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data?.found) {
+      sched = Array.isArray(data.scheduled_posts) ? data.scheduled_posts : [];
+      updateStats();
+      renderCarousel();
+    }
+  } catch (e) {
+    console.error('Refresh error:', e);
+  }
+}
 
-      if (isVideo && bytes.length > 1000) {
-        clearInterval(pollingInterval); pollingInterval = null;
-        const url = URL.createObjectURL(new Blob([buffer], { type: 'video/mp4' }));
-        progressFill.style.width = '100%'; setAllStepsDone();
-        resultVideo.src = url; downloadBtn.href = url;
-        cleanup(); setTimeout(() => showSection('result'), 500); return;
-      }
+/* ═══════════════════════════════════════════════
+   الكاروسيل / عرض الجداول
+═══════════════════════════════════════════════ */
+function renderCarousel() {
+  const nav = document.getElementById('carouselNav');
 
-      try {
-        const data = JSON.parse(new TextDecoder().decode(buffer));
-        
-        // التقاط أخطاء الخادم القياسية الناتجة عن الانهيار
-        if (data.status === 'error' || data.message) {
-          clearInterval(pollingInterval); pollingInterval = null;
-          cleanup(); 
-          // عرض رسالة خطأ لطيفة للعميل
-          showFatalError('❌ نعتذر، تعذر إكمال معالجة الملف. يرجى المحاولة مرة أخرى بعد قليل.'); 
-          showSection('upload');
-        }
-      } catch { /* still processing */ }
-    } catch(err) { }
-  }, POLL_INTERVAL_MS);
-});
+  if (categories.length === 0) {
+    document.getElementById('tablesCarousel').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <p>لا توجد فئات معرفة في إعدادات العميل.</p>
+      </div>`;
+    nav.style.display = 'none';
+    return;
+  }
 
-// ════════════════════════════════════════════════════════════
-//  Again
-// ════════════════════════════════════════════════════════════
-againBtn.addEventListener('click', () => {
-  if (resultVideo.src) URL.revokeObjectURL(resultVideo.src);
-  resultVideo.src = ''; downloadBtn.href = '#';
-  clearFile(); hideError(); cleanup(); resetSteps();
-  progressFill.style.width = '0%'; elapsedDisp.textContent = '00:00';
-  etaDisp.textContent = 'الوقت المتوقع: ~2 دقيقة';
-  showSection('upload');
-});
+  if (currentSlide >= categories.length) currentSlide = 0;
+  nav.style.display = 'flex';
+  updateCarouselView();
+}
 
-// Init
-showSection('upload');
+function updateCarouselView() {
+  const cat = categories[currentSlide];
+  const now = new Date();
+
+  document.getElementById('slideTitle').textContent = `النوع: ${cat}`;
+  document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${categories.length}`;
+  document.getElementById('prevBtn').disabled = currentSlide === 0;
+  document.getElementById('nextBtn').disabled = currentSlide === categories.length - 1;
+
+  const filtered = sched.filter(p => p.number_of_the_psot === cat)
+    .sort((a, b) => new Date(a.posting_time) - new Date(b.posting_time));
+
+  if (filtered.length === 0) {
+    document.getElementById('tablesCarousel').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <p>لا توجد منشورات لهذه الفئة بعد.</p>
+      </div>`;
+    return;
+  }
+
+  // *** الإصلاح: تخزين بيانات المنشورات في schedMap بدل تمريرها في onclick ***
+  schedMap = {};
+  filtered.forEach(p => { schedMap[p.id] = p; });
+
+  const rows = filtered.map(p => {
+    const dt = p.posting_time ? new Date(p.posting_time) : null;
+    const info = getStatusInfo(p);
+    const canEdit = !isPublished(p.status);
+
+    return `
+      <tr class="${info.rowCls}">
+        <td style="white-space:nowrap">
+          <div style="font-weight:700;color:var(--g800);font-size:13px">
+            ${dt ? dt.toLocaleDateString('ar-EG', {year:'numeric', month:'short', day:'numeric'}) : '—'}
+          </div>
+          <div style="font-size:11px;color:var(--g400);margin-top:2px">
+            ${dt ? dt.toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : '—'}
+          </div>
+        </td>
+        <td>
+          <div class="post-text-cell" title="${escAttr(p.post_text)}">${escHtml(p.post_text) || '<em style="color:var(--g400)">فارغ</em>'}</div>
+        </td>
+        <td><span class="badge ${info.cls}">${info.label}</span></td>
+        <td>
+          <div class="action-btns">
+            ${canEdit ? `
+              <button class="btn-sm btn-edit" onclick="openEdit(${p.id})">تعديل</button>
+              <button class="btn-sm btn-delete" onclick="openDelete(${p.id})">حذف</button>
+            ` : '<span style="font-size:11px;color:var(--g400)">—</span>'}
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('tablesCarousel').innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>التاريخ والوقت</th>
+            <th>نص المنشور</th>
+            <th>الحالة</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function prevSlide() { if (currentSlide > 0) { currentSlide--; updateCarouselView(); } }
+function nextSlide() { if (currentSlide < categories.length - 1) { currentSlide++; updateCarouselView(); } }
+
+/* ═══════════════════════════════════════════════
+   مودال التعديل
+═══════════════════════════════════════════════ */
+
+// *** الإصلاح: openEdit بتاخد ID بس وتجيب البيانات من schedMap ***
+function openEdit(id) {
+  const p = schedMap[id];
+  if (!p) return;
+
+  document.getElementById('editId').value = id;
+  document.getElementById('editCategory').value = p.number_of_the_psot || '';
+  document.getElementById('editText').value = p.post_text || '';
+  document.getElementById('editText').classList.remove('err');
+  document.getElementById('errEditText').style.display = 'none';
+  document.getElementById('errEditTime').style.display = 'none';
+
+  // تحويل ISO → datetime-local
+  if (p.posting_time) {
+    const dtObj = new Date(p.posting_time);
+    const local = new Date(dtObj.getTime() - dtObj.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    document.getElementById('editTime').value = local;
+  } else {
+    document.getElementById('editTime').value = '';
+  }
+
+  // تعيين الحد الأدنى = الآن
+  const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  document.getElementById('editTime').min = nowLocal;
+
+  openModal('editModal');
+}
+
+async function saveEdit() {
+  const id = parseInt(document.getElementById('editId').value);
+  const category = document.getElementById('editCategory').value;
+  const text = document.getElementById('editText').value.trim();
+  const timeVal = document.getElementById('editTime').value;
+
+  let ok = true;
+
+  if (!text) {
+    document.getElementById('editText').classList.add('err');
+    document.getElementById('errEditText').style.display = 'block';
+    ok = false;
+  }
+
+  if (!timeVal || new Date(timeVal) <= new Date()) {
+    document.getElementById('errEditTime').style.display = 'block';
+    ok = false;
+  }
+
+  if (!ok) return;
+
+  const btn = document.getElementById('saveEditBtn');
+  setLoading(btn, true, '⏳ جاري الحفظ...');
+
+  try {
+    const res = await fetch(`${N8N}/webhook/submit-posts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'update',
+        posts: [{
+          id,
+          client_id: clientId,
+          post_text: text,
+          category: category,
+          posting_time: new Date(timeVal).toISOString()
+        }]
+      })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    closeModal('editModal');
+    toast('✅ تم التعديل بنجاح', 'success');
+    await refreshData();
+  } catch (e) {
+    console.error('Edit error:', e);
+    toast('❌ خطأ في التعديل — يرجى المحاولة مرة أخرى', 'error');
+  } finally {
+    setLoading(btn, false, '💾 حفظ التعديل');
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   مودال الحذف
+═══════════════════════════════════════════════ */
+function openDelete(id) {
+  document.getElementById('deleteId').value = id;
+  openModal('deleteModal');
+}
+
+async function confirmDelete() {
+  const id = parseInt(document.getElementById('deleteId').value);
+  const btn = document.getElementById('confirmDeleteBtn');
+  setLoading(btn, true, '⏳ جاري الحذف...');
+
+  try {
+    const res = await fetch(`${N8N}/webhook/submit-posts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'delete',
+        posts: [{ id, client_id: clientId }]
+      })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    closeModal('deleteModal');
+    toast('✅ تم الحذف بنجاح', 'success');
+    await refreshData();
+  } catch (e) {
+    console.error('Delete error:', e);
+    toast('❌ خطأ في الحذف — يرجى المحاولة مرة أخرى', 'error');
+  } finally {
+    setLoading(btn, false, 'نعم، احذف');
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   التابات
+═══════════════════════════════════════════════ */
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('tab-add').style.display = name === 'add' ? 'block' : 'none';
+  document.getElementById('tab-sched').style.display = name === 'sched' ? 'block' : 'none';
+  if (name === 'sched') refreshData(); // تحديث البيانات عند فتح تاب الجداول
+}
+
+/* ═══════════════════════════════════════════════
+   دوال مساعدة للمودال، التوست، وغيرها
+═══════════════════════════════════════════════ */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function handleOverlayClick(e, id) { if (e.target === e.currentTarget) closeModal(id); }
+
+function clearErr(el, errId) {
+  el.classList.remove('err');
+  const errEl = document.getElementById(errId);
+  if (errEl) errEl.style.display = 'none';
+}
+
+function setLoading(btn, loading, text) {
+  btn.disabled = loading;
+  btn.textContent = text;
+}
+
+let _toastTimer = null;
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  clearTimeout(_toastTimer);
+  t.textContent = msg;
+  t.className = `show t-${type}`;
+  _toastTimer = setTimeout(() => { t.className = ''; }, 3800);
+}
+
+// دوال الأمان ضد XSS
+function escHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function escAttr(str) { return escHtml(str); }
+function escJs(str) {
+  return String(str ?? '')
+    .replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n').replace(/\r/g, '');
+}
+
+// بدء التطبيق
+init();
 </script>
 </body>
 </html>
