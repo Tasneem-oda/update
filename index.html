@@ -25,10 +25,17 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     .error-icon{font-size:48px}
 
+    /* ════ تنسيقات تسجيل الدخول الجديدة ════ */
+    .login-card {background: #fff; border-radius: var(--r); padding: 32px 24px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: right; border: 1px solid var(--g200);}
+    .login-title {font-size: 20px; font-weight: 800; color: var(--g800); margin-bottom: 24px; text-align: center; display: flex; flex-direction: column; gap: 8px;}
+    .login-title span {font-size: 13px; font-weight: 600; color: var(--g400);}
+    
     .hdr{background:linear-gradient(135deg,var(--p) 0%,var(--pd) 100%);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(79,70,229,.35)}
     .hdr-logo{display:flex;align-items:center;gap:10px}
     .hdr-logo span{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px}
     .client-badge{background:rgba(255,255,255,.18);backdrop-filter:blur(4px);color:#fff;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.25)}
+    .logout-btn {background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 5px 12px; border-radius: var(--rs); font-size: 12px; font-family: 'Cairo'; cursor: pointer; transition: all 0.2s;}
+    .logout-btn:hover {background: rgba(220,38,38,0.8); border-color: rgba(220,38,38,1);}
 
     .payment-banner{background:var(--wl);border-bottom:2px solid #fbbf24;padding:10px 20px;text-align:center;font-size:13px;font-weight:700;color:#92400e;display:none;gap:8px;align-items:center;justify-content:center}
     .payment-banner.show{display:flex}
@@ -144,15 +151,35 @@
 </head>
 <body>
 
-<div id="s-loading" class="full-page">
+<div id="s-login" class="full-page">
+  <div class="login-card">
+    <div class="login-title">
+      🔒 تسجيل الدخول
+      <span>نظام الجدولة الذكي للعيادات</span>
+    </div>
+    <div class="field">
+      <label>معرّف العميل (Client ID) <span class="req">*</span></label>
+      <input type="text" id="loginId" placeholder="أدخل المعرّف الخاص بك..." dir="ltr" oninput="clearErr(this, 'errLogin')">
+    </div>
+    <div class="field">
+      <label>الرمز السري (PIN Code) <span class="req">*</span></label>
+      <input type="password" id="loginPin" placeholder="••••••••" dir="ltr" oninput="clearErr(this, 'errLogin')">
+      <div class="field-error" id="errLogin" style="text-align:right;">المعرف أو الرمز السري غير صحيح</div>
+    </div>
+    <button class="btn btn-primary" id="loginBtn" style="width:100%; margin-top: 10px;" onclick="handleLogin()">تسجيل الدخول</button>
+  </div>
+</div>
+
+<div id="s-loading" class="full-page" style="display:none">
   <div class="spinner"></div>
   <p>جاري تحميل بياناتك...</p>
 </div>
 
 <div id="s-notfound" class="full-page" style="display:none">
   <div class="error-icon">⚠️</div>
-  <h2>الرابط غير صحيح</h2>
-  <p>العميل غير موجود أو الرابط المستخدم غير صحيح. يرجى التواصل مع الدعم.</p>
+  <h2>حساب غير موجود</h2>
+  <p>لم نتمكن من العثور على حسابك. يرجى تسجيل الدخول مرة أخرى أو التواصل مع الدعم.</p>
+  <button class="btn btn-secondary" style="margin-top:10px" onclick="logout()">العودة لتسجيل الدخول</button>
 </div>
 
 <div id="s-main" style="display:none">
@@ -161,7 +188,10 @@
     <div class="hdr-logo">
       <span>🗓 نظام الجدولة الذكي</span>
     </div>
-    <span class="client-badge" id="clientNameBadge">—</span>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span class="client-badge" id="clientNameBadge">—</span>
+      <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+    </div>
   </div>
 
   <div class="payment-banner" id="paymentBanner">
@@ -241,7 +271,6 @@
 
 </div>
 
-<!-- ════ مودال التعديل ════ -->
 <div class="modal-overlay" id="editModal" onclick="handleOverlayClick(event,'editModal')">
   <div class="modal">
     <div class="modal-header">
@@ -271,7 +300,6 @@
   </div>
 </div>
 
-<!-- ════ مودال الحذف ════ -->
 <div class="modal-overlay" id="deleteModal" onclick="handleOverlayClick(event,'deleteModal')">
   <div class="modal" style="max-width:400px;text-align:center">
     <div style="font-size:52px;margin-bottom:12px">🗑️</div>
@@ -290,11 +318,12 @@
 
 <script>
 /* ═══════════════════════════════════════════════
-   الإعدادات والمتغيرات
+   الإعدادات والمتغيرات (تم تحديث منطق الـ ID)
 ═══════════════════════════════════════════════ */
 const N8N = 'https://tasneemahmed-n8n-test.hf.space';
-const params = new URLSearchParams(location.search);
-const clientId = params.get('id');
+
+// جلب الـ ID من التخزين المحلي بدلاً من الرابط
+let clientId = localStorage.getItem('n8n_client_id');
 
 let client = null;
 let sched = [];
@@ -302,23 +331,84 @@ let posts = [];
 let postCnt = 0;
 let currentSlide = 0;
 let categories = [];
-
 let schedMap = {};
 
 /* ═══════════════════════════════════════════════
-   التهيئة والتحميل
+   نظام المصادقة وتسجيل الدخول
+═══════════════════════════════════════════════ */
+async function handleLogin() {
+  const idInput = document.getElementById('loginId');
+  const pinInput = document.getElementById('loginPin');
+  const btn = document.getElementById('loginBtn');
+  
+  const idVal = idInput.value.trim();
+  const pinVal = pinInput.value.trim();
+  
+  if (!idVal || !pinVal) {
+    idInput.classList.add('err');
+    pinInput.classList.add('err');
+    document.getElementById('errLogin').style.display = 'block';
+    return;
+  }
+  
+  setLoading(btn, true, '⏳ جاري التحقق...');
+  
+  try {
+    // إرسال طلب لـ n8n للتحقق من تطابق הـ ID مع הـ PIN
+    const res = await fetch(`${N8N}/webhook/verify-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_id: idVal, pin_code: pinVal })
+    });
+    
+    if (!res.ok) throw new Error('Network error');
+    
+    const data = await res.json();
+    
+    if (data.valid) {
+      // حفظ الجلسة محلياً وفتح اللوحة
+      localStorage.setItem('n8n_client_id', idVal);
+      clientId = idVal;
+      toast('✅ تم تسجيل الدخول بنجاح', 'success');
+      init(); // تشغيل النظام
+    } else {
+      // بيانات خاطئة
+      idInput.classList.add('err');
+      pinInput.classList.add('err');
+      document.getElementById('errLogin').style.display = 'block';
+      toast('❌ المعرف أو الرمز السري غير صحيح', 'error');
+    }
+  } catch (e) {
+    console.error('Login Error:', e);
+    toast('❌ حدث خطأ أثناء الاتصال بالخادم', 'error');
+  } finally {
+    setLoading(btn, false, 'تسجيل الدخول');
+  }
+}
+
+function logout() {
+  localStorage.removeItem('n8n_client_id');
+  location.reload(); // إعادة تحميل الصفحة للعودة لشاشة الدخول
+}
+
+/* ═══════════════════════════════════════════════
+   التهيئة والتحميل الأساسي للوحة
 ═══════════════════════════════════════════════ */
 async function init() {
-  if (!clientId) { show('notfound'); return; }
+  // إذا لم يكن مسجلاً، أظهر شاشة الدخول
+  if (!clientId) { 
+    show('login'); 
+    return; 
+  }
 
-  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  if (!UUID_RE.test(clientId)) { show('notfound'); return; }
+  show('loading');
 
   try {
     const res = await fetch(`${N8N}/webhook/client-data?id=${encodeURIComponent(clientId)}`);
-    if (res.status === 404) { show('notfound'); return; }
+    if (res.status === 404) { logout(); return; } // إذا حُذف الحساب، اخرجه
+    
     const data = await res.json();
-    if (!data?.found) { show('notfound'); return; }
+    if (!data?.found) { logout(); return; }
 
     client = data;
     sched = Array.isArray(data.scheduled_posts) ? data.scheduled_posts : [];
@@ -333,7 +423,7 @@ async function init() {
 }
 
 function show(id) {
-  ['loading', 'notfound', 'main'].forEach(s => {
+  ['loading', 'notfound', 'main', 'login'].forEach(s => {
     const el = document.getElementById('s-' + s);
     if (el) el.style.display = s === id ? 'block' : 'none';
   });
@@ -884,6 +974,7 @@ function escJs(str) {
     .replace(/\n/g, '\\n').replace(/\r/g, '');
 }
 
+// بدء تشغيل النظام
 init();
 </script>
 </body>
