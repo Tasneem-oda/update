@@ -418,7 +418,7 @@ function connectLinkedIn() {
   // [!] يجب تغيير الـ CLIENT ID هنا بمعرف التطبيق الخاص بك من مطوري لينكد إن
   const clientId_LI = '774z4bd71u95xa'; 
   const redirectUri = `${N8N}/webhook/linkedin-callback`;
-  const scope = 'w_member_social openid profile offline_access';
+  const scope = 'w_member_social openid profile ';
   
   const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId_LI}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${clientId}&scope=${encodeURIComponent(scope)}`;
   window.location.href = authUrl;
