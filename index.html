@@ -25,7 +25,6 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     .error-icon{font-size:48px}
 
-    /* ════ تنسيقات تسجيل الدخول ════ */
     .login-card {background: #fff; border-radius: var(--r); padding: 32px 24px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: right; border: 1px solid var(--g200);}
     .login-title {font-size: 20px; font-weight: 800; color: var(--g800); margin-bottom: 24px; text-align: center; display: flex; flex-direction: column; gap: 8px;}
     .login-title span {font-size: 13px; font-weight: 600; color: var(--g400);}
@@ -35,7 +34,7 @@
     .hdr-logo span{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px}
     .client-badge{background:rgba(255,255,255,.18);backdrop-filter:blur(4px);color:#fff;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.25)}
     .logout-btn {background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 5px 12px; border-radius: var(--rs); font-size: 12px; font-family: 'Cairo'; cursor: pointer; transition: all 0.2s;}
-    .logout-btn:hover {background: rgba(220,38,38,0.8); border-color: rgba(220,38,38,1);}
+    .logout-btn:hover:not(:disabled) {background: rgba(220,38,38,0.8); border-color: rgba(220,38,38,1);}
 
     .payment-banner{background:var(--wl);border-bottom:2px solid #fbbf24;padding:10px 20px;text-align:center;font-size:13px;font-weight:700;color:#92400e;display:none;gap:8px;align-items:center;justify-content:center}
     .payment-banner.show{display:flex}
@@ -185,6 +184,7 @@
     </div>
     <div style="display:flex; align-items:center; gap:12px;">
       <span class="client-badge" id="clientNameBadge">—</span>
+      <button id="linkedinBtn" class="logout-btn" style="background:rgba(10,102,194,0.9); border-color:#0a66c2;" onclick="connectLinkedIn()">🔗 ربط لينكد إن</button>
       <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
     </div>
   </div>
@@ -312,12 +312,9 @@
 <div id="toast"></div>
 
 <script>
-/* ═══════════════════════════════════════════════
-   الإعدادات والمتغيرات
-═══════════════════════════════════════════════ */
 const N8N = 'https://tasneemahmed-n8n-test.hf.space';
 const params = new URLSearchParams(location.search);
-const clientId = params.get('id');
+let clientId = params.get('id') || localStorage.getItem('n8n_client_id');
 
 let client = null;
 let sched = [];
@@ -327,15 +324,17 @@ let currentSlide = 0;
 let categories = [];
 let schedMap = {};
 
-/* ═══════════════════════════════════════════════
-   نظام المصادقة والتحميل (محدث)
-═══════════════════════════════════════════════ */
 async function init() {
   if (!clientId) { 
     show('notfound'); 
     return; 
   }
-
+  
+  if (params.get('id') && params.get('id') !== localStorage.getItem('n8n_client_id')) {
+     localStorage.removeItem('n8n_pin_' + localStorage.getItem('n8n_client_id'));
+  }
+  
+  localStorage.setItem('n8n_client_id', clientId);
   const savedPin = localStorage.getItem('n8n_pin_' + clientId);
   
   if (savedPin) {
@@ -344,13 +343,11 @@ async function init() {
     if (isValid) {
       await loadClientData();
     } else {
-      // الرمز السري تم تغييره أو الجلسة غير صالحة
       localStorage.removeItem('n8n_pin_' + clientId);
       toast('انتهت الجلسة أو تم تغيير الرمز السري، يرجى تسجيل الدخول مجدداً', 'warn');
       show('login');
     }
   } else {
-    // العميل لديه الرابط لكن لم يسجل الدخول بعد
     show('login');
   }
 }
@@ -362,13 +359,9 @@ async function verifyPinRemotely(id, pin) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ client_id: id, pin_code: pin })
     });
-    
     if (!res.ok) return false;
     const data = await res.json();
-    
-    // التعديل هنا: فحص البيانات سواء كانت مصفوفة (Array) أو كائن مباشر (Object)
     const isValid = Array.isArray(data) ? data[0]?.valid : data?.valid;
-    
     return isValid === true;
   } catch (e) {
     console.error('Verify error:', e);
@@ -421,6 +414,16 @@ async function loadClientData() {
   }
 }
 
+function connectLinkedIn() {
+  // [!] يجب تغيير الـ CLIENT ID هنا بمعرف التطبيق الخاص بك من مطوري لينكد إن
+  const clientId_LI = '774z4bd71u95xa'; 
+  const redirectUri = `${N8N}/webhook/linkedin-callback`;
+  const scope = 'w_member_social openid profile';
+  
+  const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId_LI}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${clientId}&scope=${encodeURIComponent(scope)}`;
+  window.location.href = authUrl;
+}
+
 function logout() {
   localStorage.removeItem('n8n_pin_' + clientId);
   location.reload();
@@ -433,14 +436,22 @@ function show(id) {
   });
 }
 
-/* ═══════════════════════════════════════════════
-   باقي دوال لوحة التحكم (بدون تغيير)
-═══════════════════════════════════════════════ */
 function renderMain() {
   document.getElementById('clientNameBadge').textContent = client.clint_name || 'عميل';
 
   if (!client.payment_status) {
     document.getElementById('paymentBanner').classList.add('show');
+  }
+
+  // التحقق من حالة ربط لينكد إن
+  if (client.custom_config?.li_access_token) {
+    const liBtn = document.getElementById('linkedinBtn');
+    liBtn.textContent = '✅ لينكد إن متصل';
+    liBtn.style.background = 'rgba(22, 163, 74, 0.2)';
+    liBtn.style.borderColor = '#15803d';
+    liBtn.style.color = '#15803d';
+    liBtn.disabled = true;
+    liBtn.style.cursor = 'default';
   }
 
   updateStats();
@@ -978,7 +989,6 @@ function escJs(str) {
     .replace(/\n/g, '\\n').replace(/\r/g, '');
 }
 
-// بدء التشغيل التلقائي
 init();
 </script>
 </body>
