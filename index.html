@@ -183,10 +183,11 @@
       <span>🗓 نظام الجدولة الذكي</span>
     </div>
     <div style="display:flex; align-items:center; gap:12px;">
-      <span class="client-badge" id="clientNameBadge">—</span>
-      <button id="linkedinBtn" class="logout-btn" style="background:rgba(10,102,194,0.9); border-color:#0a66c2;" onclick="connectLinkedIn()">🔗 ربط لينكد إن</button>
-      <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
-    </div>
+  <span class="client-badge" id="clientNameBadge">—</span>
+  <button id="facebookBtn" class="logout-btn" style="background:#1877f2; border-color:#1877f2;" onclick="connectFacebook()">📘 ربط فيسبوك</button>
+  <button id="linkedinBtn" class="logout-btn" style="background:#0a66c2; border-color:#0a66c2;" onclick="connectLinkedIn()">💼 ربط لينكد إن</button>
+  <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+</div>
   </div>
 
   <div class="payment-banner" id="paymentBanner">
@@ -988,7 +989,14 @@ function escJs(str) {
     .replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"')
     .replace(/\n/g, '\\n').replace(/\r/g, '');
 }
-
+function connectFacebook() {
+  const appId = '1484661629919683'; // معرف تطبيقك في ميتا
+  const redirectUri = `${N8N}/webhook/facebook-callback`;
+  const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,public_profile';
+  
+  const authUrl = `https://www.facebook.com/v20.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${clientId}&scope=${encodeURIComponent(scope)}`;
+  window.location.href = authUrl;
+}
 init();
 </script>
 </body>
