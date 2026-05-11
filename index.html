@@ -362,9 +362,14 @@ async function verifyPinRemotely(id, pin) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ client_id: id, pin_code: pin })
     });
+    
     if (!res.ok) return false;
     const data = await res.json();
-    return data.valid === true;
+    
+    // التعديل هنا: فحص البيانات سواء كانت مصفوفة (Array) أو كائن مباشر (Object)
+    const isValid = Array.isArray(data) ? data[0]?.valid : data?.valid;
+    
+    return isValid === true;
   } catch (e) {
     console.error('Verify error:', e);
     return false;
