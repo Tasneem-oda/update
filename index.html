@@ -25,7 +25,7 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     .error-icon{font-size:48px}
 
-    /* ════ تنسيقات تسجيل الدخول الجديدة ════ */
+    /* ════ تنسيقات تسجيل الدخول ════ */
     .login-card {background: #fff; border-radius: var(--r); padding: 32px 24px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: right; border: 1px solid var(--g200);}
     .login-title {font-size: 20px; font-weight: 800; color: var(--g800); margin-bottom: 24px; text-align: center; display: flex; flex-direction: column; gap: 8px;}
     .login-title span {font-size: 13px; font-weight: 600; color: var(--g400);}
@@ -151,35 +151,30 @@
 </head>
 <body>
 
-<div id="s-login" class="full-page">
+<div id="s-login" class="full-page" style="display:none">
   <div class="login-card">
     <div class="login-title">
-      🔒 تسجيل الدخول
-      <span>نظام الجدولة الذكي للعيادات</span>
-    </div>
-    <div class="field">
-      <label>معرّف العميل (Client ID) <span class="req">*</span></label>
-      <input type="text" id="loginId" placeholder="أدخل المعرّف الخاص بك..." dir="ltr" oninput="clearErr(this, 'errLogin')">
+      🔒 حماية الحساب
+      <span>يرجى إدخال الرمز السري الخاص بك للوصول</span>
     </div>
     <div class="field">
       <label>الرمز السري (PIN Code) <span class="req">*</span></label>
       <input type="password" id="loginPin" placeholder="••••••••" dir="ltr" oninput="clearErr(this, 'errLogin')">
-      <div class="field-error" id="errLogin" style="text-align:right;">المعرف أو الرمز السري غير صحيح</div>
+      <div class="field-error" id="errLogin" style="text-align:right;">الرمز السري غير صحيح</div>
     </div>
-    <button class="btn btn-primary" id="loginBtn" style="width:100%; margin-top: 10px;" onclick="handleLogin()">تسجيل الدخول</button>
+    <button class="btn btn-primary" id="loginBtn" style="width:100%; margin-top: 10px;" onclick="handleLoginSubmit()">تأكيد الدخول</button>
   </div>
 </div>
 
-<div id="s-loading" class="full-page" style="display:none">
+<div id="s-loading" class="full-page">
   <div class="spinner"></div>
   <p>جاري تحميل بياناتك...</p>
 </div>
 
 <div id="s-notfound" class="full-page" style="display:none">
   <div class="error-icon">⚠️</div>
-  <h2>حساب غير موجود</h2>
-  <p>لم نتمكن من العثور على حسابك. يرجى تسجيل الدخول مرة أخرى أو التواصل مع الدعم.</p>
-  <button class="btn btn-secondary" style="margin-top:10px" onclick="logout()">العودة لتسجيل الدخول</button>
+  <h2>عذراً، الرابط غير صحيح</h2>
+  <p>المعرف الخاص بك غير موجود في الرابط، يرجى استخدام الرابط المخصص الذي تم إرساله لك.</p>
 </div>
 
 <div id="s-main" style="display:none">
@@ -318,12 +313,11 @@
 
 <script>
 /* ═══════════════════════════════════════════════
-   الإعدادات والمتغيرات (تم تحديث منطق الـ ID)
+   الإعدادات والمتغيرات
 ═══════════════════════════════════════════════ */
 const N8N = 'https://tasneemahmed-n8n-test.hf.space';
-
-// جلب الـ ID من التخزين المحلي بدلاً من الرابط
-let clientId = localStorage.getItem('n8n_client_id');
+const params = new URLSearchParams(location.search);
+const clientId = params.get('id');
 
 let client = null;
 let sched = [];
@@ -334,81 +328,81 @@ let categories = [];
 let schedMap = {};
 
 /* ═══════════════════════════════════════════════
-   نظام المصادقة وتسجيل الدخول
+   نظام المصادقة والتحميل (محدث)
 ═══════════════════════════════════════════════ */
-async function handleLogin() {
-  const idInput = document.getElementById('loginId');
+async function init() {
+  if (!clientId) { 
+    show('notfound'); 
+    return; 
+  }
+
+  const savedPin = localStorage.getItem('n8n_pin_' + clientId);
+  
+  if (savedPin) {
+    show('loading');
+    const isValid = await verifyPinRemotely(clientId, savedPin);
+    if (isValid) {
+      await loadClientData();
+    } else {
+      // الرمز السري تم تغييره أو الجلسة غير صالحة
+      localStorage.removeItem('n8n_pin_' + clientId);
+      toast('انتهت الجلسة أو تم تغيير الرمز السري، يرجى تسجيل الدخول مجدداً', 'warn');
+      show('login');
+    }
+  } else {
+    // العميل لديه الرابط لكن لم يسجل الدخول بعد
+    show('login');
+  }
+}
+
+async function verifyPinRemotely(id, pin) {
+  try {
+    const res = await fetch(`${N8N}/webhook/verify-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_id: id, pin_code: pin })
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data.valid === true;
+  } catch (e) {
+    console.error('Verify error:', e);
+    return false;
+  }
+}
+
+async function handleLoginSubmit() {
   const pinInput = document.getElementById('loginPin');
+  const pinVal = pinInput.value.trim();
   const btn = document.getElementById('loginBtn');
   
-  const idVal = idInput.value.trim();
-  const pinVal = pinInput.value.trim();
-  
-  if (!idVal || !pinVal) {
-    idInput.classList.add('err');
+  if (!pinVal) {
     pinInput.classList.add('err');
     document.getElementById('errLogin').style.display = 'block';
     return;
   }
   
   setLoading(btn, true, '⏳ جاري التحقق...');
+  const isValid = await verifyPinRemotely(clientId, pinVal);
+  setLoading(btn, false, 'تأكيد الدخول');
   
-  try {
-    // إرسال طلب لـ n8n للتحقق من تطابق הـ ID مع הـ PIN
-    const res = await fetch(`${N8N}/webhook/verify-login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_id: idVal, pin_code: pinVal })
-    });
-    
-    if (!res.ok) throw new Error('Network error');
-    
-    const data = await res.json();
-    
-    if (data.valid) {
-      // حفظ الجلسة محلياً وفتح اللوحة
-      localStorage.setItem('n8n_client_id', idVal);
-      clientId = idVal;
-      toast('✅ تم تسجيل الدخول بنجاح', 'success');
-      init(); // تشغيل النظام
-    } else {
-      // بيانات خاطئة
-      idInput.classList.add('err');
-      pinInput.classList.add('err');
-      document.getElementById('errLogin').style.display = 'block';
-      toast('❌ المعرف أو الرمز السري غير صحيح', 'error');
-    }
-  } catch (e) {
-    console.error('Login Error:', e);
-    toast('❌ حدث خطأ أثناء الاتصال بالخادم', 'error');
-  } finally {
-    setLoading(btn, false, 'تسجيل الدخول');
+  if (isValid) {
+    localStorage.setItem('n8n_pin_' + clientId, pinVal);
+    toast('✅ تم تسجيل الدخول بنجاح', 'success');
+    show('loading');
+    await loadClientData();
+  } else {
+    pinInput.classList.add('err');
+    document.getElementById('errLogin').style.display = 'block';
   }
 }
 
-function logout() {
-  localStorage.removeItem('n8n_client_id');
-  location.reload(); // إعادة تحميل الصفحة للعودة لشاشة الدخول
-}
-
-/* ═══════════════════════════════════════════════
-   التهيئة والتحميل الأساسي للوحة
-═══════════════════════════════════════════════ */
-async function init() {
-  // إذا لم يكن مسجلاً، أظهر شاشة الدخول
-  if (!clientId) { 
-    show('login'); 
-    return; 
-  }
-
-  show('loading');
-
+async function loadClientData() {
   try {
     const res = await fetch(`${N8N}/webhook/client-data?id=${encodeURIComponent(clientId)}`);
-    if (res.status === 404) { logout(); return; } // إذا حُذف الحساب، اخرجه
-    
+    if (res.status === 404) { show('notfound'); return; }
     const data = await res.json();
-    if (!data?.found) { logout(); return; }
+    if (!data?.found) { show('notfound'); return; }
 
     client = data;
     sched = Array.isArray(data.scheduled_posts) ? data.scheduled_posts : [];
@@ -422,6 +416,11 @@ async function init() {
   }
 }
 
+function logout() {
+  localStorage.removeItem('n8n_pin_' + clientId);
+  location.reload();
+}
+
 function show(id) {
   ['loading', 'notfound', 'main', 'login'].forEach(s => {
     const el = document.getElementById('s-' + s);
@@ -429,6 +428,9 @@ function show(id) {
   });
 }
 
+/* ═══════════════════════════════════════════════
+   باقي دوال لوحة التحكم (بدون تغيير)
+═══════════════════════════════════════════════ */
 function renderMain() {
   document.getElementById('clientNameBadge').textContent = client.clint_name || 'عميل';
 
@@ -475,9 +477,6 @@ function getStatusInfo(p) {
   return { label: '🕐 مجدول', cls: 'b-pending', rowCls: 'row-pending' };
 }
 
-/* ═══════════════════════════════════════════════
-   إضافة وإدارة المنشورات (نموذج الإضافة)
-═══════════════════════════════════════════════ */
 function addPost() {
   const platforms = client?.custom_config?.platforms || ['facebook'];
   const cats = Object.keys(client?.custom_config?.user_prompt || {});
@@ -974,7 +973,7 @@ function escJs(str) {
     .replace(/\n/g, '\\n').replace(/\r/g, '');
 }
 
-// بدء تشغيل النظام
+// بدء التشغيل التلقائي
 init();
 </script>
 </body>
