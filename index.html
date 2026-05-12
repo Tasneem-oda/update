@@ -183,11 +183,11 @@
       <span>🗓 نظام الجدولة الذكي</span>
     </div>
     <div style="display:flex; align-items:center; gap:12px;">
-      <span class="client-badge" id="clientNameBadge">—</span>
-      <button id="facebookBtn" class="logout-btn" style="background:#1877f2; border-color:#1877f2;" onclick="connectFacebook()">📘 ربط فيسبوك</button>
-      <button id="linkedinBtn" class="logout-btn" style="background:#0a66c2; border-color:#0a66c2;" onclick="connectLinkedIn()">💼 ربط لينكد إن</button>
-      <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
-    </div>
+  <span class="client-badge" id="clientNameBadge">—</span>
+  <button id="facebookBtn" class="logout-btn" style="background:#1877f2; border-color:#1877f2;" onclick="connectFacebook()">📘 ربط فيسبوك</button>
+  <button id="linkedinBtn" class="logout-btn" style="background:#0a66c2; border-color:#0a66c2;" onclick="connectLinkedIn()">💼 ربط لينكد إن</button>
+  <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+</div>
   </div>
 
   <div class="payment-banner" id="paymentBanner">
@@ -330,9 +330,14 @@ function checkAuthStatus() {
   const authStatus = urlParams.get('auth');
   const platform = urlParams.get('platform');
 
-  if (authStatus === 'success') {
+  if (authStatus) {
     const pName = platform === 'facebook' ? 'فيسبوك' : 'لينكد إن';
-    toast(`✅ تم ربط حساب ${pName} بنجاح`, 'success');
+    
+    if (authStatus === 'success') {
+      toast(`✅ تم ربط حساب ${pName} بنجاح`, 'success');
+    } else if (authStatus === 'failed') {
+      toast(`❌ فشلت عملية ربط حساب ${pName}`, 'error');
+    }
     
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.delete('auth');
@@ -433,15 +438,6 @@ async function loadClientData() {
   }
 }
 
-function connectFacebook() {
-  const appId = '1484661629919683'; 
-  const redirectUri = `${N8N}/webhook/facebook-callback`;
-  const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,public_profile';
-  
-  const authUrl = `https://www.facebook.com/v20.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${clientId}&scope=${encodeURIComponent(scope)}`;
-  window.location.href = authUrl;
-}
-
 function connectLinkedIn() {
   const clientId_LI = '774z4bd71u95xa'; 
   const redirectUri = `${N8N}/webhook/linkedin-callback`;
@@ -455,27 +451,7 @@ function logout() {
   localStorage.removeItem('n8n_pin_' + clientId);
   location.reload();
 }
-function checkAuthStatus() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const authStatus = urlParams.get('auth');
-  const platform = urlParams.get('platform');
 
-  if (authStatus) {
-    const pName = platform === 'facebook' ? 'فيسبوك' : 'لينكد إن';
-    
-    if (authStatus === 'success') {
-      toast(`✅ تم ربط حساب ${pName} بنجاح`, 'success');
-    } else if (authStatus === 'failed') {
-      toast(`❌ فشلت عملية ربط حساب ${pName}`, 'error');
-    }
-    
-    // تنظيف الرابط برمجياً دون إعادة تحميل الصفحة (لمنع تكرار الإشعار)
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.delete('auth');
-    newUrl.searchParams.delete('platform');
-    window.history.replaceState({path: newUrl.href}, '', newUrl.href);
-  }
-}
 function show(id) {
   ['loading', 'notfound', 'main', 'login'].forEach(s => {
     const el = document.getElementById('s-' + s);
@@ -490,20 +466,22 @@ function renderMain() {
     document.getElementById('paymentBanner').classList.add('show');
   }
 
+  // التحقق من حالة ربط لينكد إن
   if (client.custom_config?.li_access_token) {
     const liBtn = document.getElementById('linkedinBtn');
     liBtn.textContent = '✅ لينكد إن متصل';
-    liBtn.style.background = 'rgba(22, 163, 74, 0.15)';
+    liBtn.style.background = 'rgba(22, 163, 74, 0.2)';
     liBtn.style.borderColor = '#15803d';
     liBtn.style.color = '#15803d';
     liBtn.disabled = true;
     liBtn.style.cursor = 'default';
   }
 
+  // التحقق من حالة ربط فيسبوك
   if (client.custom_config?.fb_page_token) {
     const fbBtn = document.getElementById('facebookBtn');
     fbBtn.textContent = '✅ فيسبوك متصل';
-    fbBtn.style.background = 'rgba(22, 163, 74, 0.15)';
+    fbBtn.style.background = 'rgba(22, 163, 74, 0.2)';
     fbBtn.style.borderColor = '#15803d';
     fbBtn.style.color = '#15803d';
     fbBtn.disabled = true;
@@ -1044,7 +1022,14 @@ function escJs(str) {
     .replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"')
     .replace(/\n/g, '\\n').replace(/\r/g, '');
 }
-
+function connectFacebook() {
+  const appId = '1484661629919683'; 
+  const redirectUri = `${N8N}/webhook/facebook-callback`;
+  const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,public_profile';
+  
+  const authUrl = `https://www.facebook.com/v20.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${clientId}&scope=${encodeURIComponent(scope)}`;
+  window.location.href = authUrl;
+}
 init();
 </script>
 </body>
