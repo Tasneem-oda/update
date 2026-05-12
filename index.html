@@ -455,7 +455,27 @@ function logout() {
   localStorage.removeItem('n8n_pin_' + clientId);
   location.reload();
 }
+function checkAuthStatus() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const authStatus = urlParams.get('auth');
+  const platform = urlParams.get('platform');
 
+  if (authStatus) {
+    const pName = platform === 'facebook' ? 'فيسبوك' : 'لينكد إن';
+    
+    if (authStatus === 'success') {
+      toast(`✅ تم ربط حساب ${pName} بنجاح`, 'success');
+    } else if (authStatus === 'failed') {
+      toast(`❌ فشلت عملية ربط حساب ${pName}`, 'error');
+    }
+    
+    // تنظيف الرابط برمجياً دون إعادة تحميل الصفحة (لمنع تكرار الإشعار)
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.delete('auth');
+    newUrl.searchParams.delete('platform');
+    window.history.replaceState({path: newUrl.href}, '', newUrl.href);
+  }
+}
 function show(id) {
   ['loading', 'notfound', 'main', 'login'].forEach(s => {
     const el = document.getElementById('s-' + s);
