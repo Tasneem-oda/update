@@ -12,61 +12,114 @@
       --s:#16a34a;--sl:#dcfce7;
       --w:#d97706;--wl:#fef3c7;
       --d:#dc2626;--dl:#fee2e2;
+      /* 🟡 تحسين التباين: رفع --g400 من #94a3b8 إلى #64748b لضمان WCAG AA */
       --g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;
-      --g300:#cbd5e1;--g400:#94a3b8;--g600:#475569;--g700:#334155;--g800:#1e293b;
+      --g300:#cbd5e1;--g400:#64748b;--g600:#475569;--g700:#334155;--g800:#1e293b;
       --r:14px;--rs:9px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05)
     }
+    /* 🟢 focus-visible للوصولية بالكيبورد */
+    :focus-visible{outline:2px solid var(--p);outline-offset:2px}
+    button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+      outline:2px solid var(--p);outline-offset:2px
+    }
+
     body{font-family:'Cairo',sans-serif;background:var(--g50);color:var(--g800);min-height:100vh}
 
+    /* ——— Loading / Empty pages ——— */
     .full-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;text-align:center;gap:14px}
     .full-page h2{font-size:18px;color:var(--g800)}
     .full-page p{font-size:14px;color:var(--g400)}
-    .spinner{width:44px;height:44px;border:3px solid var(--g200);border-top-color:var(--p);border-radius:50%;animation:spin .75s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
     .error-icon{font-size:48px}
 
-    .login-card {background: #fff; border-radius: var(--r); padding: 32px 24px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: right; border: 1px solid var(--g200);}
-    .login-title {font-size: 20px; font-weight: 800; color: var(--g800); margin-bottom: 24px; text-align: center; display: flex; flex-direction: column; gap: 8px;}
-    .login-title span {font-size: 13px; font-weight: 600; color: var(--g400);}
-    
-    .hdr{background:linear-gradient(135deg,var(--p) 0%,var(--pd) 100%);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(79,70,229,.35)}
-    .hdr-logo{display:flex;align-items:center;gap:10px}
-    .hdr-logo span{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px}
-    .client-badge{background:rgba(255,255,255,.18);backdrop-filter:blur(4px);color:#fff;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.25)}
-    .logout-btn {background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 5px 12px; border-radius: var(--rs); font-size: 12px; font-family: 'Cairo'; cursor: pointer; transition: all 0.2s;}
-    .logout-btn:hover:not(:disabled) {background: rgba(220,38,38,0.8); border-color: rgba(220,38,38,1);}
+    /* 🟢 Skeleton loaders بدل spinner وحيد */
+    .skeleton-page{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:0}
+    .skeleton-hdr{width:100%;height:52px;background:var(--pd);margin-bottom:0}
+    .skeleton-stats{display:flex;gap:0;width:100%;border-bottom:1px solid var(--g200)}
+    .skeleton-stat{flex:1;padding:16px 20px;border-left:1px solid var(--g200)}
+    .skeleton-stat:last-child{border-left:none}
+    .skeleton-block{border-radius:6px;background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .skeleton-content{padding:20px 14px;width:100%;max-width:920px;margin:0 auto}
 
+    /* ——— Login ——— */
+    .login-card{background:#fff;border-radius:var(--r);padding:32px 24px;width:100%;max-width:400px;box-shadow:0 10px 25px rgba(0,0,0,.05);text-align:right;border:1px solid var(--g200)}
+    .login-title{font-size:20px;font-weight:800;color:var(--g800);margin-bottom:24px;text-align:center;display:flex;flex-direction:column;gap:8px}
+    .login-title span{font-size:13px;font-weight:600;color:var(--g400)}
+
+    /* ——— Header ——— */
+    .hdr{
+      /* 🟡 fallback solid قبل gradient لحماية المتصفحات التي لا تدعم linear-gradient */
+      background:var(--pd);
+      background:linear-gradient(135deg,var(--p) 0%,var(--pd) 100%);
+      padding:14px 20px;display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(79,70,229,.35)
+    }
+    .hdr-logo{display:flex;align-items:center;gap:10px}
+    .hdr-logo span{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+    /* 🟢 SVG icon بدل emoji في العلامة التجارية */
+    .logo-icon{width:22px;height:22px;flex-shrink:0}
+    .client-badge{background:rgba(255,255,255,.18);backdrop-filter:blur(4px);color:#fff;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.25)}
+
+    /* ——— الأزرار الاجتماعية على الموبايل — dropdown (⋮) ——— */
+    .hdr-actions{display:flex;align-items:center;gap:10px}
+    .social-btns{display:flex;align-items:center;gap:8px}
+    .logout-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 12px;border-radius:var(--rs);font-size:12px;font-family:'Cairo';cursor:pointer;transition:all .2s;white-space:nowrap}
+    .logout-btn:hover:not(:disabled){background:rgba(220,38,38,.8);border-color:rgba(220,38,38,1)}
+
+    /* Mobile overflow menu */
+    .mobile-menu-wrap{display:none;position:relative}
+    .mobile-menu-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;width:34px;height:34px;border-radius:var(--rs);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Cairo'}
+    .mobile-dropdown{display:none;position:absolute;left:0;top:calc(100% + 8px);background:#fff;border-radius:var(--r);box-shadow:0 8px 28px rgba(0,0,0,.16);min-width:180px;overflow:hidden;border:1px solid var(--g200);z-index:200}
+    .mobile-dropdown.open{display:block;animation:fadeIn .18s ease}
+    .mobile-dropdown-item{display:flex;align-items:center;gap:8px;padding:11px 16px;font-size:13px;font-weight:700;color:var(--g700);cursor:pointer;border:none;background:none;font-family:'Cairo';width:100%;text-align:right;transition:background .15s}
+    .mobile-dropdown-item:hover{background:var(--g50)}
+    .mobile-dropdown-item.danger:hover{background:var(--dl);color:var(--d)}
+    .mobile-dropdown-divider{height:1px;background:var(--g200);margin:2px 0}
+
+    @media(max-width:640px){
+      .social-btns{display:none}
+      .mobile-menu-wrap{display:block}
+    }
+
+    /* ——— Payment banner ——— */
     .payment-banner{background:var(--wl);border-bottom:2px solid #fbbf24;padding:10px 20px;text-align:center;font-size:13px;font-weight:700;color:#92400e;display:none;gap:8px;align-items:center;justify-content:center}
     .payment-banner.show{display:flex}
 
+    /* ——— Stats ——— */
     .stats{background:#fff;border-bottom:1px solid var(--g200);display:flex;overflow-x:auto}
     .stat{padding:16px 20px;text-align:center;border-left:1px solid var(--g200);flex:1;min-width:110px;transition:background .2s}
     .stat:last-child{border-left:none}
     .stat-val{font-size:24px;font-weight:800;line-height:1;margin-bottom:5px}
-    .stat-lbl{font-size:11px;color:var(--g400);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+    /* 🟡 رفع حجم stat-lbl من 11px إلى 12px */
+    .stat-lbl{font-size:12px;color:var(--g400);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 
+    /* ——— Tabs ——— */
     .tabs{background:#fff;border-bottom:1px solid var(--g200);display:flex;padding:0 16px;gap:4px}
     .tab{padding:13px 18px;border:none;background:none;font-family:'Cairo';font-size:13px;font-weight:700;color:var(--g400);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;display:flex;align-items:center;gap:6px}
     .tab.on{color:var(--p);border-bottom-color:var(--p)}
     .tab:hover:not(.on){color:var(--g700);background:var(--g50)}
 
+    /* ——— Content ——— */
     .content{max-width:920px;margin:0 auto;padding:20px 14px}
-
     .card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
     .card-title{font-size:14px;font-weight:800;margin-bottom:16px;color:var(--g800);display:flex;align-items:center;gap:7px}
 
-    .preview-box{background:var(--pl);border:1.5px solid #c4b5fd;border-radius:var(--rs);padding:11px 14px;margin-top:14px;font-size:12px;color:var(--pd);line-height:1.9;display:none}
+    .preview-box{background:var(--pl);border:1.5px solid #c4b5fd;border-radius:var(--rs);padding:11px 14px;margin-top:14px;font-size:13px;color:var(--pd);line-height:1.9;display:none}
     .preview-box strong{font-weight:700}
 
+    /* ——— Carousel ——— */
     .carousel-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;background:#fff;padding:11px 14px;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--shadow)}
     .nav-btn{background:var(--pl);color:var(--p);border:none;padding:6px 16px;border-radius:var(--rs);font-weight:700;cursor:pointer;font-family:'Cairo';font-size:13px;transition:all .2s}
     .nav-btn:hover:not(:disabled){background:var(--p);color:#fff}
     .nav-btn:disabled{opacity:.3;cursor:not-allowed}
     .slide-title{font-weight:800;font-size:15px;color:var(--g800);text-align:center}
-    .slide-counter{font-size:11px;color:var(--g400);font-weight:600;margin-top:2px;text-align:center}
+    .slide-counter{font-size:12px;color:var(--g400);font-weight:600;margin-top:2px;text-align:center}
 
+    /* ——— Table ——— */
     .table-wrap{overflow-x:auto;border-radius:var(--rs)}
-    table{width:100%;border-collapse:collapse;font-size:13px}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    /* 🟢 Sticky table header */
+    thead{position:sticky;top:0;z-index:2}
     th{text-align:right;background:var(--g100);padding:11px 14px;color:var(--g600);font-weight:700;border-bottom:2px solid var(--g200);white-space:nowrap;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
     td{padding:12px 14px;border-bottom:1px solid var(--g100);vertical-align:middle}
     tr:last-child td{border-bottom:none}
@@ -82,24 +135,27 @@
     .btn-delete{color:var(--d);background:var(--dl)}
     .btn-delete:hover:not(:disabled){background:var(--d);color:#fff}
 
+    /* ——— Badges ——— */
     .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
     .b-published{background:var(--sl);color:var(--s)}
     .b-pending{background:var(--wl);color:var(--w)}
     .b-late{background:var(--dl);color:var(--d)}
     .b-failed{background:var(--dl);color:var(--d)}
 
+    /* ——— Form fields ——— */
     .field{margin-bottom:14px}
-    label{display:block;font-size:12px;font-weight:700;color:var(--g600);margin-bottom:5px;letter-spacing:.2px}
+    label{display:block;font-size:13px;font-weight:700;color:var(--g600);margin-bottom:5px;letter-spacing:.2px}
     label .req{color:var(--d);margin-right:2px}
-    input,select,textarea{width:100%;font-family:'Cairo';font-size:13px;border:1.5px solid var(--g200);border-radius:var(--rs);padding:9px 12px;outline:none;transition:border-color .2s,box-shadow .2s;background:#fff;color:var(--g800)}
+    input,select,textarea{width:100%;font-family:'Cairo';font-size:14px;border:1.5px solid var(--g200);border-radius:var(--rs);padding:9px 12px;outline:none;transition:border-color .2s,box-shadow .2s;background:#fff;color:var(--g800)}
     input:focus,select:focus,textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
     input.err,textarea.err,select.err{border-color:var(--d);box-shadow:0 0 0 3px rgba(220,38,38,.1)}
-    .field-error{font-size:11px;color:var(--d);margin-top:4px;display:none;font-weight:600}
+    .field-error{font-size:12px;color:var(--d);margin-top:4px;display:none;font-weight:600}
     textarea{resize:vertical;min-height:115px;line-height:1.75}
     .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
     .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
-    .btn{font-family:'Cairo';font-size:13px;font-weight:700;padding:11px 20px;border-radius:var(--rs);border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;letter-spacing:.2px}
+    /* ——— Buttons ——— */
+    .btn{font-family:'Cairo';font-size:14px;font-weight:700;padding:11px 20px;border-radius:var(--rs);border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;letter-spacing:.2px}
     .btn-primary{background:var(--p);color:#fff;box-shadow:0 2px 8px rgba(79,70,229,.35)}
     .btn-primary:hover:not(:disabled){background:var(--pd);transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,70,229,.4)}
     .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
@@ -109,19 +165,25 @@
     .btn-danger:hover:not(:disabled){background:#b91c1c}
     .btn-danger:disabled{opacity:.6;cursor:not-allowed}
 
+    /* ——— Post items ——— */
     .post-item{background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--r);padding:16px;margin-bottom:12px;transition:border-color .2s}
     .post-item:focus-within{border-color:var(--pp)}
     .post-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
     .post-meta{display:flex;align-items:center;gap:10px}
     .post-num{background:var(--p);color:#fff;width:26px;height:26px;border-radius:50%;text-align:center;font-size:12px;line-height:26px;font-weight:700;flex-shrink:0}
-    .post-date-preview{font-size:11px;color:var(--g400);font-weight:600;background:var(--g100);padding:3px 9px;border-radius:999px}
+    .post-date-preview{font-size:12px;color:var(--g400);font-weight:600;background:var(--g100);padding:3px 9px;border-radius:999px}
     .remove-btn{color:var(--g400);background:none;border:none;cursor:pointer;font-size:18px;padding:2px;transition:color .2s}
     .remove-btn:hover{color:var(--d)}
 
-    .empty-state{padding:48px 20px;text-align:center;color:var(--g400)}
-    .empty-state-icon{font-size:40px;margin-bottom:12px;opacity:.5}
-    .empty-state p{font-size:13px;font-weight:600}
+    /* ——— Empty state ——— */
+    .empty-state{padding:52px 20px;text-align:center;color:var(--g400)}
+    .empty-state-icon{font-size:42px;margin-bottom:14px;opacity:.5}
+    .empty-state p{font-size:14px;font-weight:600;margin-bottom:16px}
+    /* 🟢 CTA في empty state */
+    .empty-state-cta{display:inline-flex;align-items:center;gap:7px;background:var(--p);color:#fff;border:none;font-family:'Cairo';font-size:13px;font-weight:700;padding:9px 18px;border-radius:var(--rs);cursor:pointer;transition:all .2s}
+    .empty-state-cta:hover{background:var(--pd);transform:translateY(-1px)}
 
+    /* ——— Modals ——— */
     .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
     .modal-overlay.open{display:flex;animation:fadeIn .2s ease}
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -133,7 +195,8 @@
     .modal-close:hover{background:var(--g200)}
     .modal-footer{display:flex;gap:10px;margin-top:20px}
 
-    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:12px 22px;border-radius:var(--r);font-size:13px;font-weight:700;z-index:9999;display:none;font-family:'Cairo';min-width:220px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+    /* ——— Toast ——— */
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:12px 22px;border-radius:var(--r);font-size:14px;font-weight:700;z-index:9999;display:none;font-family:'Cairo';min-width:220px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.2)}
     #toast.show{display:block;animation:toastIn .3s ease}
     @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(14px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
     #toast.t-success{background:#16a34a;color:#fff}
@@ -150,44 +213,80 @@
 </head>
 <body>
 
+<!-- ——— Login ——— -->
 <div id="s-login" class="full-page" style="display:none">
   <div class="login-card">
     <div class="login-title">
-      🔒 حماية الحساب
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin:0 auto;color:var(--p)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      حماية الحساب
       <span>يرجى إدخال الرمز السري الخاص بك للوصول</span>
     </div>
     <div class="field">
       <label>الرمز السري (PIN Code) <span class="req">*</span></label>
-      <input type="password" id="loginPin" placeholder="••••••••" dir="ltr" oninput="clearErr(this, 'errLogin')">
+      <input type="password" id="loginPin" placeholder="••••••••" dir="ltr" autocomplete="current-password">
       <div class="field-error" id="errLogin" style="text-align:right;">الرمز السري غير صحيح</div>
     </div>
-    <button class="btn btn-primary" id="loginBtn" style="width:100%; margin-top: 10px;" onclick="handleLoginSubmit()">تأكيد الدخول</button>
+    <button class="btn btn-primary" id="loginBtn" style="width:100%;margin-top:10px;">تأكيد الدخول</button>
   </div>
 </div>
 
-<div id="s-loading" class="full-page">
-  <div class="spinner"></div>
-  <p>جاري تحميل بياناتك...</p>
+<!-- ——— Loading (Skeleton) ——— -->
+<div id="s-loading" class="skeleton-page">
+  <div class="skeleton-hdr"></div>
+  <div class="skeleton-stats">
+    <div class="skeleton-stat"><div class="skeleton-block" style="height:28px;width:50%;margin:0 auto 8px"></div><div class="skeleton-block" style="height:12px;width:70%;margin:0 auto"></div></div>
+    <div class="skeleton-stat"><div class="skeleton-block" style="height:28px;width:50%;margin:0 auto 8px"></div><div class="skeleton-block" style="height:12px;width:70%;margin:0 auto"></div></div>
+    <div class="skeleton-stat"><div class="skeleton-block" style="height:28px;width:50%;margin:0 auto 8px"></div><div class="skeleton-block" style="height:12px;width:70%;margin:0 auto"></div></div>
+    <div class="skeleton-stat"><div class="skeleton-block" style="height:28px;width:50%;margin:0 auto 8px"></div><div class="skeleton-block" style="height:12px;width:70%;margin:0 auto"></div></div>
+  </div>
+  <div class="skeleton-content">
+    <div class="skeleton-block" style="height:120px;margin-bottom:14px;border-radius:14px"></div>
+    <div class="skeleton-block" style="height:200px;margin-bottom:14px;border-radius:14px"></div>
+    <div class="skeleton-block" style="height:48px;border-radius:9px"></div>
+  </div>
 </div>
 
+<!-- ——— Not Found ——— -->
 <div id="s-notfound" class="full-page" style="display:none">
   <div class="error-icon">⚠️</div>
   <h2>عذراً، الرابط غير صحيح</h2>
   <p>المعرف الخاص بك غير موجود في الرابط، يرجى استخدام الرابط المخصص الذي تم إرساله لك.</p>
 </div>
 
+<!-- ——— Main App ——— -->
 <div id="s-main" style="display:none">
 
   <div class="hdr">
     <div class="hdr-logo">
-      <span>🗓 نظام الجدولة الذكي</span>
+      <!-- 🟢 SVG icon بدل emoji في الشعار -->
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        <rect x="8" y="14" width="3" height="3" rx=".5" fill="#fff" stroke="none"/><rect x="13" y="14" width="3" height="3" rx=".5" fill="#fff" stroke="none"/>
+      </svg>
+      <span>نظام الجدولة الذكي</span>
     </div>
-    <div style="display:flex; align-items:center; gap:12px;">
-  <span class="client-badge" id="clientNameBadge">—</span>
-  <button id="facebookBtn" class="logout-btn" style="background:#1877f2; border-color:#1877f2;" onclick="connectFacebook()">📘 ربط فيسبوك</button>
-  <button id="linkedinBtn" class="logout-btn" style="background:#0a66c2; border-color:#0a66c2;" onclick="connectLinkedIn()">💼 ربط لينكد إن</button>
-  <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
-</div>
+
+    <div class="hdr-actions">
+      <span class="client-badge" id="clientNameBadge">—</span>
+
+      <!-- أزرار على الديسكتوب -->
+      <div class="social-btns">
+        <button id="facebookBtn" class="logout-btn" style="background:#1877f2;border-color:#1877f2;">📘 ربط فيسبوك</button>
+        <button id="linkedinBtn" class="logout-btn" style="background:#0a66c2;border-color:#0a66c2;">💼 ربط لينكد إن</button>
+        <button id="logoutBtn" class="logout-btn">تسجيل خروج</button>
+      </div>
+
+      <!-- قائمة منسدلة على الموبايل -->
+      <div class="mobile-menu-wrap">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="القائمة">⋮</button>
+        <div class="mobile-dropdown" id="mobileDropdown">
+          <button class="mobile-dropdown-item" id="mobileFacebookBtn">📘 ربط فيسبوك</button>
+          <button class="mobile-dropdown-item" id="mobileLinkedinBtn">💼 ربط لينكد إن</button>
+          <div class="mobile-dropdown-divider"></div>
+          <button class="mobile-dropdown-item danger" id="mobileLogoutBtn">تسجيل خروج</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="payment-banner" id="paymentBanner">
@@ -195,45 +294,42 @@
   </div>
 
   <div class="stats">
-    <div class="stat">
-      <div class="stat-val" id="statTotal" style="color:var(--p)">—</div>
-      <div class="stat-lbl">إجمالي</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val" id="statPending" style="color:var(--w)">—</div>
-      <div class="stat-lbl">مجدول</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val" id="statPublished" style="color:var(--s)">—</div>
-      <div class="stat-lbl">تم النشر</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val" id="statLate" style="color:var(--d)">—</div>
-      <div class="stat-lbl">متأخر</div>
-    </div>
+    <div class="stat"><div class="stat-val" id="statTotal" style="color:var(--p)">—</div><div class="stat-lbl">إجمالي</div></div>
+    <div class="stat"><div class="stat-val" id="statPending" style="color:var(--w)">—</div><div class="stat-lbl">مجدول</div></div>
+    <div class="stat"><div class="stat-val" id="statPublished" style="color:var(--s)">—</div><div class="stat-lbl">تم النشر</div></div>
+    <div class="stat"><div class="stat-val" id="statLate" style="color:var(--d)">—</div><div class="stat-lbl">متأخر</div></div>
   </div>
 
   <div class="tabs">
-    <button class="tab on" onclick="switchTab('add',this)">➕ إضافة منشورات</button>
-    <button class="tab" onclick="switchTab('sched',this)">📅 عرض الجداول</button>
+    <button class="tab on" id="tabAddBtn" data-tab="add">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      إضافة منشورات
+    </button>
+    <button class="tab" id="tabSchedBtn" data-tab="sched">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      عرض الجداول
+    </button>
   </div>
 
   <div id="tab-add" class="content">
     <div class="card">
-      <div class="card-title">⚙️ إعدادات الجدولة</div>
+      <div class="card-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        إعدادات الجدولة
+      </div>
       <div class="row3">
         <div class="field">
           <label>تاريخ البداية <span class="req">*</span></label>
-          <input type="date" id="startDate" onchange="onSettingsChange()">
+          <input type="date" id="startDate">
           <div class="field-error" id="errDate">يجب اختيار تاريخ في المستقبل</div>
         </div>
         <div class="field">
           <label>وقت النشر <span class="req">*</span></label>
-          <input type="time" id="postTime" value="12:00" onchange="onSettingsChange()">
+          <input type="time" id="postTime" value="12:00">
         </div>
         <div class="field">
           <label>التكرار بين المنشورات</label>
-          <select id="freq" onchange="onSettingsChange()">
+          <select id="freq">
             <option value="1">كل يوم</option>
             <option value="2">كل يومين</option>
             <option value="3">كل 3 أيام</option>
@@ -247,18 +343,24 @@
 
     <div id="postsList"></div>
 
-    <button class="btn btn-secondary" style="width:100%;margin-bottom:10px" onclick="addPost()">＋ إضافة منشور آخر</button>
-    <button class="btn btn-primary" id="submitBtn" style="width:100%" onclick="submitPosts()">🚀 إرسال للجدولة الآن</button>
+    <button class="btn btn-secondary" id="addPostBtn" style="width:100%;margin-bottom:10px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      إضافة منشور آخر
+    </button>
+    <button class="btn btn-primary" id="submitBtn" style="width:100%">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+      إرسال للجدولة الآن
+    </button>
   </div>
 
   <div id="tab-sched" class="content" style="display:none">
     <div class="carousel-nav" id="carouselNav" style="display:none">
-      <button class="nav-btn" onclick="prevSlide()" id="prevBtn" disabled>◀ السابق</button>
+      <button class="nav-btn" id="prevBtn" disabled>◀ السابق</button>
       <div>
         <div class="slide-title" id="slideTitle">...</div>
         <div class="slide-counter" id="slideCounter"></div>
       </div>
-      <button class="nav-btn" onclick="nextSlide()" id="nextBtn">التالي ▶</button>
+      <button class="nav-btn" id="nextBtn">التالي ▶</button>
     </div>
     <div class="card" style="padding:0;overflow:hidden">
       <div id="tablesCarousel"></div>
@@ -267,17 +369,18 @@
 
 </div>
 
-<div class="modal-overlay" id="editModal" onclick="handleOverlayClick(event,'editModal')">
+<!-- ——— Edit Modal ——— -->
+<div class="modal-overlay" id="editModal">
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">✏️ تعديل المنشور</div>
-      <button class="modal-close" onclick="closeModal('editModal')">✕</button>
+      <button class="modal-close" id="editModalClose">✕</button>
     </div>
     <input type="hidden" id="editId">
     <input type="hidden" id="editCategory">
     <div class="field">
       <label>نص المنشور <span class="req">*</span></label>
-      <textarea id="editText" placeholder="نص المنشور..." oninput="clearErr(this,'errEditText')"></textarea>
+      <textarea id="editText" placeholder="نص المنشور..."></textarea>
       <div class="field-error" id="errEditText">نص المنشور مطلوب</div>
     </div>
     <div class="field">
@@ -286,26 +389,30 @@
     </div>
     <div class="field">
       <label>وقت النشر <span class="req">*</span></label>
-      <input type="datetime-local" id="editTime" onchange="clearErr(this,'errEditTime')">
+      <input type="datetime-local" id="editTime">
       <div class="field-error" id="errEditTime">يجب اختيار وقت في المستقبل</div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary" onclick="saveEdit()" id="saveEditBtn">💾 حفظ التعديل</button>
-      <button class="btn btn-secondary" onclick="closeModal('editModal')">إلغاء</button>
+      <button class="btn btn-primary" id="saveEditBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        حفظ التعديل
+      </button>
+      <button class="btn btn-secondary" id="editModalCancel">إلغاء</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="deleteModal" onclick="handleOverlayClick(event,'deleteModal')">
+<!-- ——— Delete Modal ——— -->
+<div class="modal-overlay" id="deleteModal">
   <div class="modal" style="max-width:400px;text-align:center">
     <div style="font-size:52px;margin-bottom:12px">🗑️</div>
     <div class="modal-title" style="justify-content:center;margin-bottom:10px">تأكيد الحذف</div>
-    <p style="color:var(--g600);font-size:13px;line-height:1.8;margin-bottom:6px">هل أنت متأكد من حذف هذا المنشور نهائياً؟</p>
+    <p style="color:var(--g600);font-size:14px;line-height:1.8;margin-bottom:6px">هل أنت متأكد من حذف هذا المنشور نهائياً؟</p>
     <p style="color:var(--d);font-size:12px;font-weight:700;margin-bottom:24px">⚠️ لا يمكن التراجع عن هذا الإجراء</p>
     <input type="hidden" id="deleteId">
     <div style="display:flex;gap:10px;justify-content:center">
-      <button class="btn btn-danger" onclick="confirmDelete()" id="confirmDeleteBtn">نعم، احذف</button>
-      <button class="btn btn-secondary" onclick="closeModal('deleteModal')">إلغاء</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">نعم، احذف</button>
+      <button class="btn btn-secondary" id="deleteModalCancel">إلغاء</button>
     </div>
   </div>
 </div>
@@ -313,9 +420,16 @@
 <div id="toast"></div>
 
 <script>
+/* ================================================================
+   نظام الجدولة الذكي — JavaScript
+   ✅ تحسينات الأمان: PIN يُحقَّق عبر backend فقط؛ يُخزَّن في sessionStorage
+      بدلاً من localStorage حتى تنتهي الجلسة عند إغلاق التبويب
+   ✅ تم استبدال onclick inline بـ addEventListener
+================================================================ */
+
 const N8N = 'https://tasneemahmed-n8n-test.hf.space';
 const params = new URLSearchParams(location.search);
-let clientId = params.get('id') || localStorage.getItem('n8n_client_id');
+let clientId = params.get('id') || sessionStorage.getItem('n8n_client_id');
 
 let client = null;
 let sched = [];
@@ -325,47 +439,46 @@ let currentSlide = 0;
 let categories = [];
 let schedMap = {};
 
-function checkAuthStatus() {
+/* ——— Session helpers ——— */
+// 🔴 أمان: استخدام sessionStorage بدلاً من localStorage
+//    حتى لا يبقى الـ PIN محفوظاً بعد إغلاق المتصفح
+function getSession(key){ return sessionStorage.getItem(key); }
+function setSession(key, val){ sessionStorage.setItem(key, val); }
+function clearSession(key){ sessionStorage.removeItem(key); }
+
+/* ——— Auth ——— */
+function checkAuthStatus(){
   const urlParams = new URLSearchParams(window.location.search);
   const authStatus = urlParams.get('auth');
   const platform = urlParams.get('platform');
-
-  if (authStatus) {
+  if(authStatus){
     const pName = platform === 'facebook' ? 'فيسبوك' : 'لينكد إن';
-    
-    if (authStatus === 'success') {
-      toast(`✅ تم ربط حساب ${pName} بنجاح`, 'success');
-    } else if (authStatus === 'failed') {
-      toast(`❌ فشلت عملية ربط حساب ${pName}`, 'error');
-    }
-    
+    if(authStatus === 'success') toast(`✅ تم ربط حساب ${pName} بنجاح`, 'success');
+    else if(authStatus === 'failed') toast(`❌ فشلت عملية ربط حساب ${pName}`, 'error');
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.delete('auth');
     newUrl.searchParams.delete('platform');
-    window.history.replaceState({path: newUrl.href}, '', newUrl.href);
+    window.history.replaceState({path:newUrl.href}, '', newUrl.href);
   }
 }
 
-async function init() {
-  if (!clientId) { 
-    show('notfound'); 
-    return; 
+async function init(){
+  if(!clientId){ show('notfound'); return; }
+
+  // إذا تغيّر الـ id في الرابط، امسح الجلسة القديمة
+  if(params.get('id') && params.get('id') !== getSession('n8n_client_id')){
+    clearSession('n8n_pin_' + getSession('n8n_client_id'));
   }
-  
-  if (params.get('id') && params.get('id') !== localStorage.getItem('n8n_client_id')) {
-     localStorage.removeItem('n8n_pin_' + localStorage.getItem('n8n_client_id'));
-  }
-  
-  localStorage.setItem('n8n_client_id', clientId);
-  const savedPin = localStorage.getItem('n8n_pin_' + clientId);
-  
-  if (savedPin) {
+  setSession('n8n_client_id', clientId);
+
+  const savedPin = getSession('n8n_pin_' + clientId);
+  if(savedPin){
     show('loading');
     const isValid = await verifyPinRemotely(clientId, savedPin);
-    if (isValid) {
+    if(isValid){
       await loadClientData();
     } else {
-      localStorage.removeItem('n8n_pin_' + clientId);
+      clearSession('n8n_pin_' + clientId);
       toast('انتهت الجلسة أو تم تغيير الرمز السري، يرجى تسجيل الدخول مجدداً', 'warn');
       show('login');
     }
@@ -374,40 +487,34 @@ async function init() {
   }
 }
 
-async function verifyPinRemotely(id, pin) {
-  try {
-    const res = await fetch(`${N8N}/webhook/verify-login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_id: id, pin_code: pin })
+async function verifyPinRemotely(id, pin){
+  try{
+    const res = await fetch(`${N8N}/webhook/verify-login`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({client_id:id, pin_code:pin})
     });
-    if (!res.ok) return false;
+    if(!res.ok) return false;
     const data = await res.json();
     const isValid = Array.isArray(data) ? data[0]?.valid : data?.valid;
     return isValid === true;
-  } catch (e) {
-    console.error('Verify error:', e);
-    return false;
-  }
+  } catch(e){ console.error('Verify error:',e); return false; }
 }
 
-async function handleLoginSubmit() {
+async function handleLoginSubmit(){
   const pinInput = document.getElementById('loginPin');
   const pinVal = pinInput.value.trim();
   const btn = document.getElementById('loginBtn');
-  
-  if (!pinVal) {
+  if(!pinVal){
     pinInput.classList.add('err');
     document.getElementById('errLogin').style.display = 'block';
     return;
   }
-  
   setLoading(btn, true, '⏳ جاري التحقق...');
   const isValid = await verifyPinRemotely(clientId, pinVal);
   setLoading(btn, false, 'تأكيد الدخول');
-  
-  if (isValid) {
-    localStorage.setItem('n8n_pin_' + clientId, pinVal);
+  if(isValid){
+    setSession('n8n_pin_' + clientId, pinVal);
     toast('✅ تم تسجيل الدخول بنجاح', 'success');
     show('loading');
     await loadClientData();
@@ -417,75 +524,72 @@ async function handleLoginSubmit() {
   }
 }
 
-async function loadClientData() {
-  try {
+async function loadClientData(){
+  try{
     const res = await fetch(`${N8N}/webhook/client-data?id=${encodeURIComponent(clientId)}`);
-    if (res.status === 404) { show('notfound'); return; }
+    if(res.status === 404){ show('notfound'); return; }
     const data = await res.json();
-    if (!data?.found) { show('notfound'); return; }
-
+    if(!data?.found){ show('notfound'); return; }
     client = data;
     sched = Array.isArray(data.scheduled_posts) ? data.scheduled_posts : [];
     categories = Object.keys(client.custom_config?.user_prompt || {});
-
     renderMain();
     show('main');
-    
     checkAuthStatus();
-  } catch (e) {
-    console.error('Init error:', e);
-    show('notfound');
-  }
+  } catch(e){ console.error('Init error:',e); show('notfound'); }
 }
 
-function connectLinkedIn() {
-  const clientId_LI = '774z4bd71u95xa'; 
+function connectFacebook(){
+  const appId = '1484661629919683';
+  const redirectUri = `${N8N}/webhook/facebook-callback`;
+  const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,public_profile';
+  window.location.href = `https://www.facebook.com/v20.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${clientId}&scope=${encodeURIComponent(scope)}`;
+}
+
+function connectLinkedIn(){
+  const clientId_LI = '774z4bd71u95xa';
   const redirectUri = `${N8N}/webhook/linkedin-callback`;
   const scope = 'w_member_social openid profile ';
-  
-  const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId_LI}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${clientId}&scope=${encodeURIComponent(scope)}`;
-  window.location.href = authUrl;
+  window.location.href = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId_LI}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${clientId}&scope=${encodeURIComponent(scope)}`;
 }
 
-function logout() {
-  localStorage.removeItem('n8n_pin_' + clientId);
+function logout(){
+  clearSession('n8n_pin_' + clientId);
   location.reload();
 }
 
-function show(id) {
-  ['loading', 'notfound', 'main', 'login'].forEach(s => {
+function show(id){
+  ['loading','notfound','main','login'].forEach(s => {
     const el = document.getElementById('s-' + s);
-    if (el) el.style.display = s === id ? 'block' : 'none';
+    if(el) el.style.display = s === id ? (s === 'loading' ? 'flex' : 'block') : 'none';
   });
 }
 
-function renderMain() {
+/* ——— Render main ——— */
+function renderMain(){
   document.getElementById('clientNameBadge').textContent = client.clint_name || 'عميل';
+  if(!client.payment_status) document.getElementById('paymentBanner').classList.add('show');
 
-  if (!client.payment_status) {
-    document.getElementById('paymentBanner').classList.add('show');
+  // حالة ربط لينكد إن
+  if(client.custom_config?.li_access_token){
+    ['linkedinBtn','mobileLinkedinBtn'].forEach(id => {
+      const btn = document.getElementById(id);
+      if(!btn) return;
+      btn.textContent = '✅ لينكد إن متصل';
+      btn.style.cssText += ';background:rgba(22,163,74,.15);border-color:#15803d;color:#15803d;cursor:default';
+      btn.disabled = true;
+    });
   }
 
-  // التحقق من حالة ربط لينكد إن
-  if (client.custom_config?.li_access_token) {
-    const liBtn = document.getElementById('linkedinBtn');
-    liBtn.textContent = '✅ لينكد إن متصل';
-    liBtn.style.background = 'rgba(22, 163, 74, 0.2)';
-    liBtn.style.borderColor = '#15803d';
-    liBtn.style.color = '#15803d';
-    liBtn.disabled = true;
-    liBtn.style.cursor = 'default';
-  }
-
-  // التحقق من حالة ربط فيسبوك
-  if (client.custom_config?.fb_page_token) {
-    const fbBtn = document.getElementById('facebookBtn');
-    fbBtn.textContent = '✅ فيسبوك متصل';
-    fbBtn.style.background = 'rgba(22, 163, 74, 0.2)';
-    fbBtn.style.borderColor = '#15803d';
-    fbBtn.style.color = '#15803d';
-    fbBtn.disabled = true;
-    fbBtn.style.cursor = 'default';
+  // حالة ربط فيسبوك
+  if(client.custom_config?.fb_page_token){
+    ['facebookBtn','mobileFacebookBtn'].forEach(id => {
+      const btn = document.getElementById(id);
+      if(!btn) return;
+      btn.textContent = '✅ فيسبوك متصل';
+      btn.style.cssText += ';background:rgba(22,163,74,.15);border-color:#15803d;color:#15803d;cursor:default';
+      btn.disabled = true;
+    });
   }
 
   updateStats();
@@ -501,88 +605,78 @@ function renderMain() {
   renderCarousel();
 }
 
-function updateStats() {
+function updateStats(){
   const now = new Date();
   const total = sched.length;
   const published = sched.filter(p => isPublished(p.status)).length;
   const late = sched.filter(p => !isPublished(p.status) && p.posting_time && new Date(p.posting_time) < now).length;
   const pending = total - published - late;
-
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statPending').textContent = pending;
   document.getElementById('statPublished').textContent = published;
   document.getElementById('statLate').textContent = late;
 }
 
-function isPublished(status) {
-  return status === 'published' || status === 'publishd';
-}
+function isPublished(status){ return status === 'published' || status === 'publishd'; }
 
-function getStatusInfo(p) {
+function getStatusInfo(p){
   const now = new Date();
   const dt = p.posting_time ? new Date(p.posting_time) : null;
-  if (isPublished(p.status)) return { label: '✅ تم النشر', cls: 'b-published', rowCls: 'row-published' };
-  if (p.status === 'failed') return { label: '❌ فشل النشر', cls: 'b-failed', rowCls: 'row-late' };
-  if (dt && dt < now) return { label: '⚠️ متأخر', cls: 'b-late', rowCls: 'row-late' };
-  return { label: '🕐 مجدول', cls: 'b-pending', rowCls: 'row-pending' };
+  if(isPublished(p.status)) return {label:'✅ تم النشر', cls:'b-published', rowCls:'row-published'};
+  if(p.status === 'failed') return {label:'❌ فشل النشر', cls:'b-failed', rowCls:'row-late'};
+  if(dt && dt < now) return {label:'⚠️ متأخر', cls:'b-late', rowCls:'row-late'};
+  return {label:'🕐 مجدول', cls:'b-pending', rowCls:'row-pending'};
 }
 
-function addPost() {
+/* ——— Posts management ——— */
+function addPost(){
   const platforms = client?.custom_config?.platforms || ['facebook'];
   const cats = Object.keys(client?.custom_config?.user_prompt || {});
-  posts.push({ id: ++postCnt, text: '', platforms: [...platforms], category: cats[0] || 'general' });
+  posts.push({id:++postCnt, text:'', platforms:[...platforms], category:cats[0]||'general'});
   renderPosts();
   updatePreview();
 }
 
-function removePost(idx) {
-  if (posts.length <= 1) {
-    toast('يجب أن يكون هناك منشور واحد على الأقل', 'warn');
-    return;
-  }
+function removePost(idx){
+  if(posts.length <= 1){ toast('يجب أن يكون هناك منشور واحد على الأقل', 'warn'); return; }
   posts.splice(idx, 1);
   renderPosts();
   updatePreview();
 }
 
-function updatePlatformSelection(i) {
+function updatePlatformSelection(i){
   const checkboxes = document.querySelectorAll(`.plat-cb-${i}:checked`);
   posts[i].platforms = Array.from(checkboxes).map(cb => cb.value);
   updatePreview();
 }
 
-function renderPosts() {
+function renderPosts(){
   const platforms = client?.custom_config?.platforms || ['facebook'];
   const cats = Object.keys(client?.custom_config?.user_prompt || {});
-
   document.getElementById('postsList').innerHTML = posts.map((p, i) => {
     const dt = calcPostDate(i);
     const dtLabel = dt ? formatDate(dt) : '';
-    if (!Array.isArray(p.platforms)) p.platforms = platforms;
+    if(!Array.isArray(p.platforms)) p.platforms = platforms;
     return `
       <div class="post-item">
         <div class="post-hdr">
           <div class="post-meta">
-            <div class="post-num">${i + 1}</div>
+            <div class="post-num">${i+1}</div>
             ${dtLabel ? `<span class="post-date-preview">📅 ${dtLabel}</span>` : ''}
           </div>
-          <button class="remove-btn" onclick="removePost(${i})" title="حذف المنشور">🗑️</button>
+          <button class="remove-btn" data-remove="${i}" title="حذف المنشور">🗑️</button>
         </div>
         <div class="field">
           <label>نص المنشور <span class="req">*</span></label>
-          <textarea
-            id="pt-${i}"
-            oninput="posts[${i}].text=this.value;clearErr(this,'pe-${i}')"
-            placeholder="اكتب نص المنشور هنا..."
-          >${escHtml(p.text)}</textarea>
+          <textarea id="pt-${i}" data-post-idx="${i}" placeholder="اكتب نص المنشور هنا...">${escHtml(p.text)}</textarea>
           <div class="field-error" id="pe-${i}">نص المنشور مطلوب ولا يمكن أن يكون فارغاً</div>
         </div>
         <div style="margin-top:10px">
-          <label style="font-weight:700;font-size:12px;color:var(--g600)">المنصات</label>
+          <label style="font-weight:700;font-size:13px;color:var(--g600)">المنصات</label>
           <div class="platform-checkboxes" style="display:flex;flex-wrap:wrap;gap:6px">
             ${platforms.map(pl => `
-              <label style="display:inline-flex;align-items:center;gap:3px;margin-left:12px;font-size:12px;">
-                <input type="checkbox" value="${pl}" class="plat-cb-${i}" ${(p.platforms).includes(pl)?'checked':''} onchange="updatePlatformSelection(${i})">
+              <label style="display:inline-flex;align-items:center;gap:3px;margin-left:12px;font-size:13px;">
+                <input type="checkbox" value="${pl}" class="plat-cb-${i}" ${p.platforms.includes(pl)?'checked':''} data-post-idx="${i}">
                 ${platformLabel(pl)}
               </label>
             `).join('')}
@@ -590,213 +684,196 @@ function renderPosts() {
         </div>
         <div class="field">
           <label>الفئة / النوع</label>
-          <select onchange="posts[${i}].category=this.value">
+          <select data-cat-idx="${i}">
             ${cats.map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}
           </select>
         </div>
       </div>
     `;
   }).join('');
+
+  // ربط events للعناصر الديناميكية
+  document.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', () => removePost(parseInt(btn.dataset.remove)));
+  });
+  document.querySelectorAll('textarea[data-post-idx]').forEach(ta => {
+    ta.addEventListener('input', () => {
+      const i = parseInt(ta.dataset.postIdx);
+      posts[i].text = ta.value;
+      clearErr(ta, `pe-${i}`);
+    });
+  });
+  document.querySelectorAll('input[type=checkbox][data-post-idx]').forEach(cb => {
+    cb.addEventListener('change', () => updatePlatformSelection(parseInt(cb.dataset.postIdx)));
+  });
+  document.querySelectorAll('select[data-cat-idx]').forEach(sel => {
+    sel.addEventListener('change', () => {
+      posts[parseInt(sel.dataset.catIdx)].category = sel.value;
+    });
+  });
 }
 
-function platformLabel(pl) {
-  const m = { facebook:'📘 Facebook', instagram:'📸 Instagram', twitter:'🐦 Twitter', x:'🐦 X', linkedin:'💼 LinkedIn', tiktok:'🎵 TikTok' };
+function platformLabel(pl){
+  const m={facebook:'📘 Facebook',instagram:'📸 Instagram',twitter:'🐦 Twitter',x:'🐦 X',linkedin:'💼 LinkedIn',tiktok:'🎵 TikTok'};
   return m[pl?.toLowerCase()] || pl;
 }
 
-function calcPostDate(idx) {
+function calcPostDate(idx){
   const d = document.getElementById('startDate')?.value;
   const t = document.getElementById('postTime')?.value || '12:00';
   const f = parseInt(document.getElementById('freq')?.value || '1');
-  if (!d) return null;
+  if(!d) return null;
   const dt = new Date(`${d}T${t}:00`);
-  if (isNaN(dt)) return null;
+  if(isNaN(dt)) return null;
   dt.setDate(dt.getDate() + idx * f);
   return dt;
 }
 
-function formatDate(dt) {
-  return dt.toLocaleDateString('ar-EG', { weekday:'short', year:'numeric', month:'short', day:'numeric' })
-    + ' — ' + dt.toLocaleTimeString('ar-EG', { hour:'2-digit', minute:'2-digit' });
+function formatDate(dt){
+  return dt.toLocaleDateString('ar-EG',{weekday:'short',year:'numeric',month:'short',day:'numeric'})
+    + ' — ' + dt.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
 }
 
-function onSettingsChange() {
+function onSettingsChange(){
   const d = document.getElementById('startDate').value;
   const t = document.getElementById('postTime').value || '12:00';
   const errEl = document.getElementById('errDate');
   const dateInput = document.getElementById('startDate');
-
-  if (d && t) {
+  if(d && t){
     const dt = new Date(`${d}T${t}:00`);
-    const now = new Date();
-    if (dt <= now) {
-      dateInput.classList.add('err');
-      errEl.style.display = 'block';
+    if(dt <= new Date()){
+      dateInput.classList.add('err'); errEl.style.display='block';
     } else {
-      dateInput.classList.remove('err');
-      errEl.style.display = 'none';
+      dateInput.classList.remove('err'); errEl.style.display='none';
     }
   }
-
   renderPosts();
   updatePreview();
 }
 
-function updatePreview() {
+function updatePreview(){
   const box = document.getElementById('previewBox');
   const d = document.getElementById('startDate')?.value;
   const t = document.getElementById('postTime')?.value || '12:00';
-
-  if (!d) { box.style.display = 'none'; return; }
-
+  if(!d){ box.style.display='none'; return; }
   const startDt = new Date(`${d}T${t}:00`);
-  const now = new Date();
-  if (isNaN(startDt) || startDt <= now) { box.style.display = 'none'; return; }
-
+  if(isNaN(startDt) || startDt <= new Date()){ box.style.display='none'; return; }
   const freq = parseInt(document.getElementById('freq').value);
-  const freqLabels = { 1:'يومياً', 2:'كل يومين', 3:'كل 3 أيام', 7:'أسبوعياً', 14:'كل أسبوعين' };
+  const freqLabels={1:'يومياً',2:'كل يومين',3:'كل 3 أيام',7:'أسبوعياً',14:'كل أسبوعين'};
   const freqLabel = freqLabels[freq] || `كل ${freq} أيام`;
   const lastDt = calcPostDate(posts.length - 1);
-
-  box.style.display = 'block';
-  box.innerHTML = `
-    📋 <strong>${posts.length}</strong> منشور سيُجدَّول |
-    أول نشر: <strong>${formatDate(startDt)}</strong> |
-    آخر نشر: <strong>${formatDate(lastDt)}</strong> |
-    التكرار: <strong>${freqLabel}</strong>
-  `;
+  box.style.display='block';
+  box.innerHTML=`📋 <strong>${posts.length}</strong> منشور سيُجدَّول | أول نشر: <strong>${formatDate(startDt)}</strong> | آخر نشر: <strong>${formatDate(lastDt)}</strong> | التكرار: <strong>${freqLabel}</strong>`;
 }
 
-async function submitPosts() {
-  if (!validateForm()) return;
-
+async function submitPosts(){
+  if(!validateForm()) return;
   const d = document.getElementById('startDate').value;
   const t = document.getElementById('postTime').value;
   const f = parseInt(document.getElementById('freq').value);
-
   const payload = posts.map((p, i) => {
     const dt = calcPostDate(i);
-    return {
-      client_id: clientId,
-      workflow_id: client.workflow_id || null,
-      post_text: p.text.trim(),
-      platform: p.platforms,
-      category: p.category,
-      posting_time: dt.toISOString()
-    };
+    return {client_id:clientId, workflow_id:client.workflow_id||null, post_text:p.text.trim(), platform:p.platforms, category:p.category, posting_time:dt.toISOString()};
   });
-
   const btn = document.getElementById('submitBtn');
   setLoading(btn, true, '⏳ جاري الحفظ...');
-
-  try {
-    const res = await fetch(`${N8N}/webhook/submit-posts`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'create', posts: payload })
+  try{
+    const res = await fetch(`${N8N}/webhook/submit-posts`,{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'create', posts:payload})
     });
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
     toast('✅ تم حفظ المنشورات بنجاح', 'success');
-    posts = [];
-    postCnt = 0;
-    addPost();
+    posts=[]; postCnt=0; addPost();
     await refreshData();
-  } catch (e) {
-    console.error('Submit error:', e);
+  } catch(e){
+    console.error('Submit error:',e);
     toast('❌ خطأ في الإرسال — يرجى المحاولة مرة أخرى', 'error');
   } finally {
-    setLoading(btn, false, '🚀 إرسال للجدولة الآن');
+    setLoading(btn, false, 'إرسال للجدولة الآن');
   }
 }
 
-function validateForm() {
+function validateForm(){
   let ok = true;
-
   const d = document.getElementById('startDate').value;
   const t = document.getElementById('postTime').value;
   const errDate = document.getElementById('errDate');
   const dateInput = document.getElementById('startDate');
-
-  if (!d || !t) {
-    toast('⚠️ حدد تاريخ ووقت البداية أولاً', 'warn');
-    return false;
-  }
-
+  if(!d || !t){ toast('⚠️ حدد تاريخ ووقت البداية أولاً', 'warn'); return false; }
   const startDt = new Date(`${d}T${t}:00`);
-  if (startDt <= new Date()) {
-    dateInput.classList.add('err');
-    errDate.style.display = 'block';
+  if(startDt <= new Date()){
+    dateInput.classList.add('err'); errDate.style.display='block';
     toast('⚠️ يجب أن يكون تاريخ البداية في المستقبل', 'warn');
     return false;
   }
-
   posts.forEach((p, i) => {
-    if (!p.text.trim()) {
+    if(!p.text.trim()){
       const ta = document.getElementById(`pt-${i}`);
       const er = document.getElementById(`pe-${i}`);
-      if (ta) ta.classList.add('err');
-      if (er) er.style.display = 'block';
+      if(ta) ta.classList.add('err');
+      if(er) er.style.display='block';
       ok = false;
     }
   });
-
-  if (!ok) toast('⚠️ يرجى تعبئة نص جميع المنشورات', 'warn');
+  if(!ok) toast('⚠️ يرجى تعبئة نص جميع المنشورات', 'warn');
   return ok;
 }
 
-async function refreshData() {
-  try {
+async function refreshData(){
+  try{
     const res = await fetch(`${N8N}/webhook/client-data?id=${encodeURIComponent(clientId)}`);
-    if (!res.ok) return;
+    if(!res.ok) return;
     const data = await res.json();
-    if (data?.found) {
+    if(data?.found){
       sched = Array.isArray(data.scheduled_posts) ? data.scheduled_posts : [];
       updateStats();
       renderCarousel();
     }
-  } catch (e) {
-    console.error('Refresh error:', e);
-  }
+  } catch(e){ console.error('Refresh error:',e); }
 }
 
-function renderCarousel() {
+/* ——— Carousel ——— */
+function renderCarousel(){
   const nav = document.getElementById('carouselNav');
-
-  if (categories.length === 0) {
+  if(categories.length === 0){
     document.getElementById('tablesCarousel').innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">📭</div>
         <p>لا توجد فئات معرفة في إعدادات العميل.</p>
       </div>`;
-    nav.style.display = 'none';
-    return;
+    nav.style.display='none'; return;
   }
-
-  if (currentSlide >= categories.length) currentSlide = 0;
-  nav.style.display = 'flex';
+  if(currentSlide >= categories.length) currentSlide = 0;
+  nav.style.display='flex';
   updateCarouselView();
 }
 
-function updateCarouselView() {
+function updateCarouselView(){
   const cat = categories[currentSlide];
   const now = new Date();
-
   document.getElementById('slideTitle').textContent = `النوع: ${cat}`;
-  document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${categories.length}`;
+  document.getElementById('slideCounter').textContent = `${currentSlide+1} / ${categories.length}`;
   document.getElementById('prevBtn').disabled = currentSlide === 0;
   document.getElementById('nextBtn').disabled = currentSlide === categories.length - 1;
 
   const filtered = sched.filter(p => p.number_of_the_psot === cat)
-    .sort((a, b) => new Date(a.posting_time) - new Date(b.posting_time));
+    .sort((a,b) => new Date(a.posting_time) - new Date(b.posting_time));
 
-  if (filtered.length === 0) {
+  if(filtered.length === 0){
+    // 🟢 empty state مع CTA
     document.getElementById('tablesCarousel').innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">📭</div>
         <p>لا توجد منشورات لهذه الفئة بعد.</p>
+        <button class="empty-state-cta" id="emptyCTA">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          أضف منشوراً الآن
+        </button>
       </div>`;
+    document.getElementById('emptyCTA')?.addEventListener('click', () => {
+      switchTab('add', document.getElementById('tabAddBtn'));
+    });
     return;
   }
 
@@ -807,230 +884,221 @@ function updateCarouselView() {
     const dt = p.posting_time ? new Date(p.posting_time) : null;
     const info = getStatusInfo(p);
     const canEdit = !isPublished(p.status);
-
     return `
       <tr class="${info.rowCls}">
         <td style="white-space:nowrap">
           <div style="font-weight:700;color:var(--g800);font-size:13px">
-            ${dt ? dt.toLocaleDateString('ar-EG', {year:'numeric', month:'short', day:'numeric'}) : '—'}
+            ${dt ? dt.toLocaleDateString('ar-EG',{year:'numeric',month:'short',day:'numeric'}) : '—'}
           </div>
-          <div style="font-size:11px;color:var(--g400);margin-top:2px">
-            ${dt ? dt.toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : '—'}
+          <div style="font-size:12px;color:var(--g400);margin-top:2px">
+            ${dt ? dt.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}) : '—'}
           </div>
         </td>
-        <td>
-          <div class="post-text-cell" title="${escAttr(p.post_text)}">${escHtml(p.post_text) || '<em style="color:var(--g400)">فارغ</em>'}</div>
-        </td>
+        <td><div class="post-text-cell" title="${escAttr(p.post_text)}">${escHtml(p.post_text)||'<em style="color:var(--g400)">فارغ</em>'}</div></td>
         <td><span class="badge ${info.cls}">${info.label}</span></td>
         <td>
           <div class="action-btns">
             ${canEdit ? `
-              <button class="btn-sm btn-edit" onclick="openEdit(${p.id})">تعديل</button>
-              <button class="btn-sm btn-delete" onclick="openDelete(${p.id})">حذف</button>
-            ` : '<span style="font-size:11px;color:var(--g400)">—</span>'}
+              <button class="btn-sm btn-edit" data-edit="${p.id}">تعديل</button>
+              <button class="btn-sm btn-delete" data-del="${p.id}">حذف</button>
+            ` : '<span style="font-size:12px;color:var(--g400)">—</span>'}
           </div>
         </td>
-      </tr>
-    `;
+      </tr>`;
   }).join('');
 
   document.getElementById('tablesCarousel').innerHTML = `
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>التاريخ والوقت</th>
-            <th>نص المنشور</th>
-            <th>الحالة</th>
-            <th>إجراءات</th>
-          </tr>
-        </thead>
+        <thead><tr>
+          <th>التاريخ والوقت</th>
+          <th>نص المنشور</th>
+          <th>الحالة</th>
+          <th>إجراءات</th>
+        </tr></thead>
         <tbody>${rows}</tbody>
       </table>
-    </div>
-  `;
+    </div>`;
+
+  // ربط events للجدول
+  document.querySelectorAll('[data-edit]').forEach(btn =>
+    btn.addEventListener('click', () => openEdit(parseInt(btn.dataset.edit)))
+  );
+  document.querySelectorAll('[data-del]').forEach(btn =>
+    btn.addEventListener('click', () => openDelete(parseInt(btn.dataset.del)))
+  );
 }
 
-function prevSlide() { if (currentSlide > 0) { currentSlide--; updateCarouselView(); } }
-function nextSlide() { if (currentSlide < categories.length - 1) { currentSlide++; updateCarouselView(); } }
-
-function openEdit(id) {
+/* ——— Modal: Edit ——— */
+function openEdit(id){
   const p = schedMap[id];
-  if (!p) return;
-
+  if(!p) return;
   document.getElementById('editId').value = id;
   document.getElementById('editCategory').value = p.number_of_the_psot || '';
   document.getElementById('editText').value = p.post_text || '';
   document.getElementById('editText').classList.remove('err');
-  document.getElementById('errEditText').style.display = 'none';
-  document.getElementById('errEditTime').style.display = 'none';
-
-  if (p.posting_time) {
+  document.getElementById('errEditText').style.display='none';
+  document.getElementById('errEditTime').style.display='none';
+  if(p.posting_time){
     const dtObj = new Date(p.posting_time);
-    const local = new Date(dtObj.getTime() - dtObj.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    const local = new Date(dtObj.getTime() - dtObj.getTimezoneOffset()*60000).toISOString().slice(0,16);
     document.getElementById('editTime').value = local;
   } else {
     document.getElementById('editTime').value = '';
   }
-
   const platforms = client?.custom_config?.platforms || ['facebook'];
   let currentPlatforms = [];
-  try {
-    currentPlatforms = typeof p.platform === 'string' ? JSON.parse(p.platform) : [];
-  } catch (e) {
-    currentPlatforms = [];
-  }
+  try{ currentPlatforms = typeof p.platform==='string' ? JSON.parse(p.platform) : []; } catch(e){ currentPlatforms=[]; }
   const container = document.getElementById('editPlatforms');
   container.innerHTML = platforms.map(pl => `
-    <label style="display:inline-flex;align-items:center;gap:3px;margin-left:12px;font-size:12px;">
+    <label style="display:inline-flex;align-items:center;gap:3px;margin-left:12px;font-size:13px;">
       <input type="checkbox" value="${pl}" class="edit-plat-cb" ${currentPlatforms.includes(pl)?'checked':''}>
       ${platformLabel(pl)}
-    </label>
-  `).join('');
-
-  document.getElementById('editTime').min = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    </label>`).join('');
+  document.getElementById('editTime').min = new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
   openModal('editModal');
 }
 
-async function saveEdit() {
+async function saveEdit(){
   const id = parseInt(document.getElementById('editId').value);
   const category = document.getElementById('editCategory').value;
   const text = document.getElementById('editText').value.trim();
   const timeVal = document.getElementById('editTime').value;
   const editPlatforms = Array.from(document.querySelectorAll('.edit-plat-cb:checked')).map(cb => cb.value);
-
   let ok = true;
-
-  if (!text) {
-    document.getElementById('editText').classList.add('err');
-    document.getElementById('errEditText').style.display = 'block';
-    ok = false;
-  }
-
-  if (!timeVal || new Date(timeVal) <= new Date()) {
-    document.getElementById('errEditTime').style.display = 'block';
-    ok = false;
-  }
-
-  if (!ok) return;
-
+  if(!text){ document.getElementById('editText').classList.add('err'); document.getElementById('errEditText').style.display='block'; ok=false; }
+  if(!timeVal || new Date(timeVal) <= new Date()){ document.getElementById('errEditTime').style.display='block'; ok=false; }
+  if(!ok) return;
   const btn = document.getElementById('saveEditBtn');
   setLoading(btn, true, '⏳ جاري الحفظ...');
-
-  try {
-    const res = await fetch(`${N8N}/webhook/submit-posts`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'update',
-        posts: [{
-          id,
-          client_id: clientId,
-          post_text: text,
-          category: category,
-          posting_time: new Date(timeVal).toISOString(),
-          platform: editPlatforms
-        }]
-      })
+  try{
+    const res = await fetch(`${N8N}/webhook/submit-posts`,{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'update', posts:[{id, client_id:clientId, post_text:text, category, posting_time:new Date(timeVal).toISOString(), platform:editPlatforms}]})
     });
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
     closeModal('editModal');
     toast('✅ تم التعديل بنجاح', 'success');
     await refreshData();
-  } catch (e) {
-    console.error('Edit error:', e);
-    toast('❌ خطأ في التعديل — يرجى المحاولة مرة أخرى', 'error');
-  } finally {
-    setLoading(btn, false, '💾 حفظ التعديل');
-  }
+  } catch(e){ console.error('Edit error:',e); toast('❌ خطأ في التعديل — يرجى المحاولة مرة أخرى', 'error'); }
+  finally{ setLoading(btn, false, 'حفظ التعديل'); }
 }
 
-function openDelete(id) {
-  document.getElementById('deleteId').value = id;
-  openModal('deleteModal');
-}
+/* ——— Modal: Delete ——— */
+function openDelete(id){ document.getElementById('deleteId').value=id; openModal('deleteModal'); }
 
-async function confirmDelete() {
+async function confirmDelete(){
   const id = parseInt(document.getElementById('deleteId').value);
   const btn = document.getElementById('confirmDeleteBtn');
   setLoading(btn, true, '⏳ جاري الحذف...');
-
-  try {
-    const res = await fetch(`${N8N}/webhook/submit-posts`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'delete',
-        posts: [{ id, client_id: clientId }]
-      })
+  try{
+    const res = await fetch(`${N8N}/webhook/submit-posts`,{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'delete', posts:[{id, client_id:clientId}]})
     });
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
     closeModal('deleteModal');
     toast('✅ تم الحذف بنجاح', 'success');
     await refreshData();
-  } catch (e) {
-    console.error('Delete error:', e);
-    toast('❌ خطأ في الحذف — يرجى المحاولة مرة أخرى', 'error');
-  } finally {
-    setLoading(btn, false, 'نعم، احذف');
-  }
+  } catch(e){ console.error('Delete error:',e); toast('❌ خطأ في الحذف — يرجى المحاولة مرة أخرى', 'error'); }
+  finally{ setLoading(btn, false, 'نعم، احذف'); }
 }
 
-function switchTab(name, btn) {
+/* ——— Tab switching ——— */
+function switchTab(name, btn){
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
-  document.getElementById('tab-add').style.display = name === 'add' ? 'block' : 'none';
-  document.getElementById('tab-sched').style.display = name === 'sched' ? 'block' : 'none';
-  if (name === 'sched') refreshData();
+  document.getElementById('tab-add').style.display = name==='add' ? 'block' : 'none';
+  document.getElementById('tab-sched').style.display = name==='sched' ? 'block' : 'none';
+  if(name==='sched') refreshData();
 }
 
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function handleOverlayClick(e, id) { if (e.target === e.currentTarget) closeModal(id); }
+/* ——— Modal helpers ——— */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 
-function clearErr(el, errId) {
+/* ——— Utility ——— */
+function clearErr(el, errId){
   el.classList.remove('err');
   const errEl = document.getElementById(errId);
-  if (errEl) errEl.style.display = 'none';
+  if(errEl) errEl.style.display='none';
 }
-
-function setLoading(btn, loading, text) {
-  btn.disabled = loading;
-  btn.textContent = text;
-}
-
+function setLoading(btn, loading, text){ btn.disabled=loading; btn.textContent=text; }
 let _toastTimer = null;
-function toast(msg, type = 'success') {
+function toast(msg, type='success'){
   const t = document.getElementById('toast');
-  if (!t) return;
+  if(!t) return;
   clearTimeout(_toastTimer);
-  t.textContent = msg;
-  t.className = `show t-${type}`;
-  _toastTimer = setTimeout(() => { t.className = ''; }, 3800);
+  t.textContent=msg; t.className=`show t-${type}`;
+  _toastTimer = setTimeout(()=>{ t.className=''; }, 3800);
 }
+function escHtml(str){
+  return String(str??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escAttr(str){ return escHtml(str); }
 
-function escHtml(str) {
-  return String(str ?? '')
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-function escAttr(str) { return escHtml(str); }
-function escJs(str) {
-  return String(str ?? '')
-    .replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"')
-    .replace(/\n/g, '\\n').replace(/\r/g, '');
-}
-function connectFacebook() {
-  const appId = '1484661629919683'; 
-  const redirectUri = `${N8N}/webhook/facebook-callback`;
-  const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,public_profile';
-  
-  const authUrl = `https://www.facebook.com/v20.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${clientId}&scope=${encodeURIComponent(scope)}`;
-  window.location.href = authUrl;
-}
-init();
+/* ================================================================
+   addEventListener — ربط جميع الأحداث على العناصر الثابتة
+================================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Login
+  document.getElementById('loginBtn').addEventListener('click', handleLoginSubmit);
+  document.getElementById('loginPin').addEventListener('keydown', e => {
+    if(e.key==='Enter') handleLoginSubmit();
+  });
+
+  // Header buttons
+  document.getElementById('facebookBtn').addEventListener('click', connectFacebook);
+  document.getElementById('linkedinBtn').addEventListener('click', connectLinkedIn);
+  document.getElementById('logoutBtn').addEventListener('click', logout);
+
+  // Mobile dropdown toggle
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileDropdown = document.getElementById('mobileDropdown');
+  mobileMenuBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    mobileDropdown.classList.toggle('open');
+  });
+  document.addEventListener('click', () => mobileDropdown.classList.remove('open'));
+  document.getElementById('mobileFacebookBtn').addEventListener('click', () => { mobileDropdown.classList.remove('open'); connectFacebook(); });
+  document.getElementById('mobileLinkedinBtn').addEventListener('click', () => { mobileDropdown.classList.remove('open'); connectLinkedIn(); });
+  document.getElementById('mobileLogoutBtn').addEventListener('click', () => { mobileDropdown.classList.remove('open'); logout(); });
+
+  // Tabs
+  document.getElementById('tabAddBtn').addEventListener('click', function(){ switchTab('add', this); });
+  document.getElementById('tabSchedBtn').addEventListener('click', function(){ switchTab('sched', this); });
+
+  // Add post / submit
+  document.getElementById('addPostBtn').addEventListener('click', addPost);
+  document.getElementById('submitBtn').addEventListener('click', submitPosts);
+
+  // Settings changes
+  document.getElementById('startDate').addEventListener('change', onSettingsChange);
+  document.getElementById('postTime').addEventListener('change', onSettingsChange);
+  document.getElementById('freq').addEventListener('change', onSettingsChange);
+
+  // Carousel
+  document.getElementById('prevBtn').addEventListener('click', () => { if(currentSlide>0){ currentSlide--; updateCarouselView(); } });
+  document.getElementById('nextBtn').addEventListener('click', () => { if(currentSlide<categories.length-1){ currentSlide++; updateCarouselView(); } });
+
+  // Edit modal
+  document.getElementById('saveEditBtn').addEventListener('click', saveEdit);
+  document.getElementById('editModalClose').addEventListener('click', () => closeModal('editModal'));
+  document.getElementById('editModalCancel').addEventListener('click', () => closeModal('editModal'));
+  document.getElementById('editModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal('editModal'); });
+  document.getElementById('editText').addEventListener('input', function(){ clearErr(this,'errEditText'); });
+  document.getElementById('editTime').addEventListener('change', function(){ clearErr(this,'errEditTime'); });
+
+  // Delete modal
+  document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
+  document.getElementById('deleteModalCancel').addEventListener('click', () => closeModal('deleteModal'));
+  document.getElementById('deleteModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal('deleteModal'); });
+
+  // Start
+  init();
+});
 </script>
 </body>
 </html>
