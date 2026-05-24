@@ -240,7 +240,7 @@
       <span class="client-badge" id="clientNameBadge">—</span>
 
       <div class="social-btns">
-        <button id="facebookBtn" class="logout-btn" style="background:#1877f2;border-color:#1877f2;">📘 ربط فيسبوك</button>
+        <button id="facebookBtn" class="logout-btn" style="background:#1877f2;border-color:#1877f2;">📱 ربط حسابات ميتا (FB & IG)</button>
         <button id="linkedinBtn" class="logout-btn" style="background:#0a66c2;border-color:#0a66c2;">💼 ربط لينكد إن</button>
         <button id="logoutBtn" class="logout-btn">تسجيل خروج</button>
       </div>
@@ -248,7 +248,7 @@
       <div class="mobile-menu-wrap">
         <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="القائمة">⋮</button>
         <div class="mobile-dropdown" id="mobileDropdown">
-          <button class="mobile-dropdown-item" id="mobileFacebookBtn">📘 ربط فيسبوك</button>
+          <button class="mobile-dropdown-item" id="mobileFacebookBtn">📱 ربط حسابات ميتا (FB & IG)</button>
           <button class="mobile-dropdown-item" id="mobileLinkedinBtn">💼 ربط لينكد إن</button>
           <div class="mobile-dropdown-divider"></div>
           <button class="mobile-dropdown-item danger" id="mobileLogoutBtn">تسجيل خروج</button>
@@ -498,7 +498,7 @@ async function loadClientData(){
 function connectFacebook(){
   const appId = '1484661629919683';
   const redirectUri = `${N8N}/webhook/facebook-callback`;
-  const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,public_profile';
+  const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,public_profile,instagram_basic,instagram_content_publish';
   window.location.href = `https://www.facebook.com/v20.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${clientId}&scope=${encodeURIComponent(scope)}`;
 }
 
@@ -540,7 +540,7 @@ function renderMain(){
     ['facebookBtn','mobileFacebookBtn'].forEach(id => {
       const btn = document.getElementById(id);
       if(!btn) return;
-      btn.textContent = '✅ فيسبوك متصل';
+      btn.textContent = '✅ ميتا (FB & IG) متصل';
       btn.style.cssText += ';background:rgba(22,163,74,.15);border-color:#15803d;color:#15803d;cursor:default';
       btn.disabled = true;
     });
